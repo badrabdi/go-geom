@@ -48,16 +48,16 @@ func BenchmarkSimplify(b *testing.B) {
 func ExampleSimplifyFlatCoords() {
 	pnts := []float64{0, 0, 0, 1, -1, 2, 0, 3, 0, 4, 1, 4, 2, 4.5, 3, 4, 3.5, 4, 4, 4}
 
-	stride := 2
-	ii := SimplifyFlatCoords(pnts, 0.4, stride)
+	Strd := 2
+	ii := SimplifyFlatCoords(pnts, 0.4, Strd)
 
 	for i, j := range ii {
-		if i == j*stride {
+		if i == j*Strd {
 			continue
 		}
-		pnts[i*stride], pnts[i*stride+1] = pnts[j*stride], pnts[j*stride+1]
+		pnts[i*Strd], pnts[i*Strd+1] = pnts[j*Strd], pnts[j*Strd+1]
 	}
-	pnts = pnts[:len(ii)*stride]
+	pnts = pnts[:len(ii)*Strd]
 	fmt.Printf("%#v", pnts)
 	// Output:
 	// []float64{0, 0, 0, 1, -1, 2, 0, 3, 0, 4, 2, 4.5, 4, 4}

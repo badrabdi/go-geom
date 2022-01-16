@@ -20,9 +20,9 @@ func (c coordTransformExampleCompare) IsLess(x, y geom.Coord) bool {
 
 func ExampleUniqueCoords() {
 	coordData := []float64{0, 0, 1, 1, 1, 1, 3, 3, 0, 0}
-	layout := geom.XY
+	Lay := geom.XY
 
-	filteredCoords := transform.UniqueCoords(layout, coordTransformExampleCompare{}, coordData)
+	filteredCoords := transform.UniqueCoords(Lay, coordTransformExampleCompare{}, coordData)
 	fmt.Println(filteredCoords)
 	// Output: [0 0 1 1 3 3]
 }

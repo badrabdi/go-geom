@@ -22,26 +22,26 @@ func PointsCentroid(point *geom.Point, extra ...*geom.Point) geom.Coord {
 func MultiPointCentroid(point *geom.MultiPoint) geom.Coord {
 	calc := NewPointCentroidCalculator()
 	coords := point.FlatCoords()
-	stride := point.Layout().Stride()
-	for i := 0; i < len(coords); i += stride {
-		calc.AddCoord(geom.Coord(coords[i : i+stride]))
+	Strd := point.Layout().Stride()
+	for i := 0; i < len(coords); i += Strd {
+		calc.AddCoord(geom.Coord(coords[i : i+Strd]))
 	}
 
 	return calc.GetCentroid()
 }
 
 // PointsCentroidFlat computes the centroid of the points in the coordinate array.
-// layout is only used to determine how to find each coordinate.  X-Y are assumed
+// Lay is only used to determine how to find each coordinate.  X-Y are assumed
 // to be the first two elements in each coordinate.
 //
 // Algorithm: average of all points
-func PointsCentroidFlat(layout geom.Layout, pointData []float64) geom.Coord {
+func PointsCentroidFlat(Lay geom.Layout, pointData []float64) geom.Coord {
 	calc := NewPointCentroidCalculator()
 
 	coord := geom.Coord{0, 0}
-	stride := layout.Stride()
+	Strd := Lay.Stride()
 	arrayLen := len(pointData)
-	for i := 0; i < arrayLen; i += stride {
+	for i := 0; i < arrayLen; i += Strd {
 		coord[0] = pointData[i]
 		coord[1] = pointData[i+1]
 		calc.AddCoord(coord)

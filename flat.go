@@ -2,15 +2,15 @@ package geom
 
 import "math"
 
-type geom0 struct {
-	layout     Layout
-	stride     int
-	flatCoords []float64
-	srid       int
+type Geom0 struct {
+	Lay     Layout
+	Strd     int
+	FlatCoord []float64
+	Srid       int
 }
 
 type geom1 struct {
-	geom0
+	Geom0
 }
 
 type geom2 struct {
@@ -24,82 +24,82 @@ type geom3 struct {
 }
 
 // Bounds returns the bounds of g.
-func (g *geom0) Bounds() *Bounds {
-	return NewBounds(g.layout).extendFlatCoords(g.flatCoords, 0, len(g.flatCoords), g.stride)
+func (g *Geom0) Bounds() *Bounds {
+	return NewBounds(g.Lay).extendFlatCoords(g.FlatCoord, 0, len(g.FlatCoord), g.Strd)
 }
 
 // Coords returns all the coordinates in g, i.e. a single coordinate.
-func (g *geom0) Coords() Coord {
-	return inflate0(g.flatCoords, 0, len(g.flatCoords), g.stride)
+func (g *Geom0) Coords() Coord {
+	return inflate0(g.FlatCoord, 0, len(g.FlatCoord), g.Strd)
 }
 
 // Empty returns true if g contains no coordinates.
-func (g *geom0) Empty() bool {
-	return len(g.flatCoords) == 0
+func (g *Geom0) Empty() bool {
+	return len(g.FlatCoord) == 0
 }
 
 // Ends returns the end indexes of sub-structures of g, i.e. an empty slice.
-func (g *geom0) Ends() []int {
+func (g *Geom0) Ends() []int {
 	return nil
 }
 
 // Endss returns the end indexes of sub-sub-structures of g, i.e. an empty
 // slice.
-func (g *geom0) Endss() [][]int {
+func (g *Geom0) Endss() [][]int {
 	return nil
 }
 
 // FlatCoords returns the flat coordinates of g.
-func (g *geom0) FlatCoords() []float64 {
-	return g.flatCoords
+func (g *Geom0) FlatCoords() []float64 {
+	return g.FlatCoord
 }
 
-// Layout returns g's layout.
-func (g *geom0) Layout() Layout {
-	return g.layout
+// Layout returns g's Lay.
+func (g *Geom0) Layout() Layout {
+	return g.Lay
 }
 
 // NumCoords returns the number of coordinates in g, i.e. 1.
-func (g *geom0) NumCoords() int {
+func (g *Geom0) NumCoords() int {
 	return 1
 }
 
 // Reserve reserves space in g for n coordinates.
-func (g *geom0) Reserve(n int) {
-	if cap(g.flatCoords) < n*g.stride {
-		fcs := make([]float64, len(g.flatCoords), n*g.stride)
-		copy(fcs, g.flatCoords)
-		g.flatCoords = fcs
+func (g *Geom0) Reserve(n int) {
+	if cap(g.FlatCoord) < n*g.Strd {
+		fcs := make([]float64, len(g.FlatCoord), n*g.Strd)
+		copy(fcs, g.FlatCoord)
+		g.FlatCoord = fcs
 	}
 }
 
 // SRID returns g's SRID.
-func (g *geom0) SRID() int {
-	return g.srid
+func (g *Geom0) SRID() int {
+	return g.Srid
 }
 
-func (g *geom0) setCoords(coords0 []float64) error {
+func (g *Geom0) setCoords(coords0 []float64) error {
 	var err error
-	g.flatCoords, err = deflate0(nil, coords0, g.stride)
+	g.FlatCoord, err = deflate0(nil, coords0, g.Strd)
 	return err
 }
 
-// Stride returns g's stride.
-func (g *geom0) Stride() int {
-	return g.stride
+// Stride returns g's Strd.
+func (g *Geom0) Stride() int {
+	return g.Strd
 }
 
-func (g *geom0) verify() error {
-	if g.stride != g.layout.Stride() {
+func (g *Geom0) verify() error {
+	if g.Strd != g.Lay.Stride() {
 		return errStrideLayoutMismatch
 	}
-	if g.stride == 0 {
-		if len(g.flatCoords) != 0 {
+	if g.Strd == 0 {
+		if len(g.FlatCoord) != 0 {
 			return errNonEmptyFlatCoords
 		}
 		return nil
 	}
-	if len(g.flatCoords) != g.stride {
+	if len(g.FlatCoord) != g.Strd {
 		return errLengthStrideMismatch
 	}
 	return nil
@@ -107,40 +107,40 @@ func (g *geom0) verify() error {
 
 // Coord returns the ith coord of g.
 func (g *geom1) Coord(i int) Coord {
-	return g.flatCoords[i*g.stride : (i+1)*g.stride]
+	return g.FlatCoord[i*g.Strd : (i+1)*g.Strd]
 }
 
 // Coords unpacks and returns all of g's coordinates.
 func (g *geom1) Coords() []Coord {
-	return inflate1(g.flatCoords, 0, len(g.flatCoords), g.stride)
+	return inflate1(g.FlatCoord, 0, len(g.FlatCoord), g.Strd)
 }
 
 // NumCoords returns the number of coordinates in g.
 func (g *geom1) NumCoords() int {
-	return len(g.flatCoords) / g.stride
+	return len(g.FlatCoord) / g.Strd
 }
 
 // Reverse reverses the order of g's coordinates.
 func (g *geom1) Reverse() {
-	reverse1(g.flatCoords, 0, len(g.flatCoords), g.stride)
+	reverse1(g.FlatCoord, 0, len(g.FlatCoord), g.Strd)
 }
 
 func (g *geom1) setCoords(coords1 []Coord) error {
 	var err error
-	g.flatCoords, err = deflate1(nil, coords1, g.stride)
+	g.FlatCoord, err = deflate1(nil, coords1, g.Strd)
 	return err
 }
 
 func (g *geom1) verify() error {
-	if g.stride != g.layout.Stride() {
+	if g.Strd != g.Lay.Stride() {
 		return errStrideLayoutMismatch
 	}
-	if g.stride == 0 {
-		if len(g.flatCoords) != 0 {
+	if g.Strd == 0 {
+		if len(g.FlatCoord) != 0 {
 			return errNonEmptyFlatCoords
 		}
 	} else {
-		if len(g.flatCoords)%g.stride != 0 {
+		if len(g.FlatCoord)%g.Strd != 0 {
 			return errLengthStrideMismatch
 		}
 	}
@@ -149,7 +149,7 @@ func (g *geom1) verify() error {
 
 // Coords returns all of g's coordinates.
 func (g *geom2) Coords() [][]Coord {
-	return inflate2(g.flatCoords, 0, g.ends, g.stride)
+	return inflate2(g.FlatCoord, 0, g.ends, g.Strd)
 }
 
 // Ends returns the end indexes of all sub-structures in g.
@@ -159,21 +159,21 @@ func (g *geom2) Ends() []int {
 
 // Reverse reverses the order of coordinates for each sub-structure in g.
 func (g *geom2) Reverse() {
-	reverse2(g.flatCoords, 0, g.ends, g.stride)
+	reverse2(g.FlatCoord, 0, g.ends, g.Strd)
 }
 
 func (g *geom2) setCoords(coords2 [][]Coord) error {
 	var err error
-	g.flatCoords, g.ends, err = deflate2(nil, nil, coords2, g.stride)
+	g.FlatCoord, g.ends, err = deflate2(nil, nil, coords2, g.Strd)
 	return err
 }
 
 func (g *geom2) verify() error {
-	if g.stride != g.layout.Stride() {
+	if g.Strd != g.Lay.Stride() {
 		return errStrideLayoutMismatch
 	}
-	if g.stride == 0 {
-		if len(g.flatCoords) != 0 {
+	if g.Strd == 0 {
+		if len(g.FlatCoord) != 0 {
 			return errNonEmptyFlatCoords
 		}
 		if len(g.ends) != 0 {
@@ -181,12 +181,12 @@ func (g *geom2) verify() error {
 		}
 		return nil
 	}
-	if len(g.flatCoords)%g.stride != 0 {
+	if len(g.FlatCoord)%g.Strd != 0 {
 		return errLengthStrideMismatch
 	}
 	offset := 0
 	for _, end := range g.ends {
-		if end%g.stride != 0 {
+		if end%g.Strd != 0 {
 			return errMisalignedEnd
 		}
 		if end < offset {
@@ -194,7 +194,7 @@ func (g *geom2) verify() error {
 		}
 		offset = end
 	}
-	if offset != len(g.flatCoords) {
+	if offset != len(g.FlatCoord) {
 		return errIncorrectEnd
 	}
 	return nil
@@ -202,7 +202,7 @@ func (g *geom2) verify() error {
 
 // Coords returns all the coordinates in g.
 func (g *geom3) Coords() [][][]Coord {
-	return inflate3(g.flatCoords, 0, g.endss, g.stride)
+	return inflate3(g.FlatCoord, 0, g.endss, g.Strd)
 }
 
 // Endss returns a list of all the sub-sub-structures in g.
@@ -212,21 +212,21 @@ func (g *geom3) Endss() [][]int {
 
 // Reverse reverses the order of coordinates for each sub-sub-structure in g.
 func (g *geom3) Reverse() {
-	reverse3(g.flatCoords, 0, g.endss, g.stride)
+	reverse3(g.FlatCoord, 0, g.endss, g.Strd)
 }
 
 func (g *geom3) setCoords(coords3 [][][]Coord) error {
 	var err error
-	g.flatCoords, g.endss, err = deflate3(nil, nil, coords3, g.stride)
+	g.FlatCoord, g.endss, err = deflate3(nil, nil, coords3, g.Strd)
 	return err
 }
 
 func (g *geom3) verify() error {
-	if g.stride != g.layout.Stride() {
+	if g.Strd != g.Lay.Stride() {
 		return errStrideLayoutMismatch
 	}
-	if g.stride == 0 {
-		if len(g.flatCoords) != 0 {
+	if g.Strd == 0 {
+		if len(g.FlatCoord) != 0 {
 			return errNonEmptyFlatCoords
 		}
 		if len(g.endss) != 0 {
@@ -234,13 +234,13 @@ func (g *geom3) verify() error {
 		}
 		return nil
 	}
-	if len(g.flatCoords)%g.stride != 0 {
+	if len(g.FlatCoord)%g.Strd != 0 {
 		return errLengthStrideMismatch
 	}
 	offset := 0
 	for _, ends := range g.endss {
 		for _, end := range ends {
-			if end%g.stride != 0 {
+			if end%g.Strd != 0 {
 				return errMisalignedEnd
 			}
 			if end < offset {
@@ -249,24 +249,24 @@ func (g *geom3) verify() error {
 			offset = end
 		}
 	}
-	if offset != len(g.flatCoords) {
+	if offset != len(g.FlatCoord) {
 		return errIncorrectEnd
 	}
 	return nil
 }
 
-func doubleArea1(flatCoords []float64, offset, end, stride int) float64 {
+func doubleArea1(FlatCoord []float64, offset, end, Strd int) float64 {
 	var doubleArea float64
-	for i := offset + stride; i < end; i += stride {
-		doubleArea += (flatCoords[i+1] - flatCoords[i+1-stride]) * (flatCoords[i] + flatCoords[i-stride])
+	for i := offset + Strd; i < end; i += Strd {
+		doubleArea += (FlatCoord[i+1] - FlatCoord[i+1-Strd]) * (FlatCoord[i] + FlatCoord[i-Strd])
 	}
 	return doubleArea
 }
 
-func doubleArea2(flatCoords []float64, offset int, ends []int, stride int) float64 {
+func doubleArea2(FlatCoord []float64, offset int, ends []int, Strd int) float64 {
 	var doubleArea float64
 	for i, end := range ends {
-		da := doubleArea1(flatCoords, offset, end, stride)
+		da := doubleArea1(FlatCoord, offset, end, Strd)
 		if i == 0 {
 			doubleArea = da
 		} else {
@@ -277,96 +277,96 @@ func doubleArea2(flatCoords []float64, offset int, ends []int, stride int) float
 	return doubleArea
 }
 
-func doubleArea3(flatCoords []float64, offset int, endss [][]int, stride int) float64 {
+func doubleArea3(FlatCoord []float64, offset int, endss [][]int, Strd int) float64 {
 	var doubleArea float64
 	for _, ends := range endss {
-		doubleArea += doubleArea2(flatCoords, offset, ends, stride)
+		doubleArea += doubleArea2(FlatCoord, offset, ends, Strd)
 		offset = ends[len(ends)-1]
 	}
 	return doubleArea
 }
 
-func deflate0(flatCoords []float64, c Coord, stride int) ([]float64, error) {
-	if len(c) != stride {
-		return nil, ErrStrideMismatch{Got: len(c), Want: stride}
+func deflate0(FlatCoord []float64, c Coord, Strd int) ([]float64, error) {
+	if len(c) != Strd {
+		return nil, ErrStrideMismatch{Got: len(c), Want: Strd}
 	}
-	flatCoords = append(flatCoords, c...)
-	return flatCoords, nil
+	FlatCoord = append(FlatCoord, c...)
+	return FlatCoord, nil
 }
 
-func deflate1(flatCoords []float64, coords1 []Coord, stride int) ([]float64, error) {
+func deflate1(FlatCoord []float64, coords1 []Coord, Strd int) ([]float64, error) {
 	for _, c := range coords1 {
 		var err error
-		flatCoords, err = deflate0(flatCoords, c, stride)
+		FlatCoord, err = deflate0(FlatCoord, c, Strd)
 		if err != nil {
 			return nil, err
 		}
 	}
-	return flatCoords, nil
+	return FlatCoord, nil
 }
 
 func deflate2(
-	flatCoords []float64, ends []int, coords2 [][]Coord, stride int,
+	FlatCoord []float64, ends []int, coords2 [][]Coord, Strd int,
 ) ([]float64, []int, error) {
 	for _, coords1 := range coords2 {
 		var err error
-		flatCoords, err = deflate1(flatCoords, coords1, stride)
+		FlatCoord, err = deflate1(FlatCoord, coords1, Strd)
 		if err != nil {
 			return nil, nil, err
 		}
-		ends = append(ends, len(flatCoords))
+		ends = append(ends, len(FlatCoord))
 	}
-	return flatCoords, ends, nil
+	return FlatCoord, ends, nil
 }
 
 func deflate3(
-	flatCoords []float64, endss [][]int, coords3 [][][]Coord, stride int,
+	FlatCoord []float64, endss [][]int, coords3 [][][]Coord, Strd int,
 ) ([]float64, [][]int, error) {
 	for _, coords2 := range coords3 {
 		var err error
 		var ends []int
-		flatCoords, ends, err = deflate2(flatCoords, ends, coords2, stride)
+		FlatCoord, ends, err = deflate2(FlatCoord, ends, coords2, Strd)
 		if err != nil {
 			return nil, nil, err
 		}
 		endss = append(endss, ends)
 	}
-	return flatCoords, endss, nil
+	return FlatCoord, endss, nil
 }
 
-func inflate0(flatCoords []float64, offset, end, stride int) Coord {
-	if offset+stride != end {
-		panic("geom: stride mismatch")
+func inflate0(FlatCoord []float64, offset, end, Strd int) Coord {
+	if offset+Strd != end {
+		panic("geom: Strd mismatch")
 	}
-	c := make([]float64, stride)
-	copy(c, flatCoords[offset:end])
+	c := make([]float64, Strd)
+	copy(c, FlatCoord[offset:end])
 	return c
 }
 
-func inflate1(flatCoords []float64, offset, end, stride int) []Coord {
-	coords1 := make([]Coord, (end-offset)/stride)
+func inflate1(FlatCoord []float64, offset, end, Strd int) []Coord {
+	coords1 := make([]Coord, (end-offset)/Strd)
 	for i := range coords1 {
-		coords1[i] = inflate0(flatCoords, offset, offset+stride, stride)
-		offset += stride
+		coords1[i] = inflate0(FlatCoord, offset, offset+Strd, Strd)
+		offset += Strd
 	}
 	return coords1
 }
 
-func inflate2(flatCoords []float64, offset int, ends []int, stride int) [][]Coord {
+func inflate2(FlatCoord []float64, offset int, ends []int, Strd int) [][]Coord {
 	coords2 := make([][]Coord, len(ends))
 	for i := range coords2 {
 		end := ends[i]
-		coords2[i] = inflate1(flatCoords, offset, end, stride)
+		coords2[i] = inflate1(FlatCoord, offset, end, Strd)
 		offset = end
 	}
 	return coords2
 }
 
-func inflate3(flatCoords []float64, offset int, endss [][]int, stride int) [][][]Coord {
+func inflate3(FlatCoord []float64, offset int, endss [][]int, Strd int) [][][]Coord {
 	coords3 := make([][][]Coord, len(endss))
 	for i := range coords3 {
 		ends := endss[i]
-		coords3[i] = inflate2(flatCoords, offset, ends, stride)
+		coords3[i] = inflate2(FlatCoord, offset, ends, Strd)
 		if len(ends) > 0 {
 			offset = ends[len(ends)-1]
 		}
@@ -374,55 +374,55 @@ func inflate3(flatCoords []float64, offset int, endss [][]int, stride int) [][][
 	return coords3
 }
 
-func length1(flatCoords []float64, offset, end, stride int) float64 {
+func length1(FlatCoord []float64, offset, end, Strd int) float64 {
 	var length float64
-	for i := offset + stride; i < end; i += stride {
-		dx := flatCoords[i] - flatCoords[i-stride]
-		dy := flatCoords[i+1] - flatCoords[i+1-stride]
+	for i := offset + Strd; i < end; i += Strd {
+		dx := FlatCoord[i] - FlatCoord[i-Strd]
+		dy := FlatCoord[i+1] - FlatCoord[i+1-Strd]
 		length += math.Sqrt(dx*dx + dy*dy)
 	}
 	return length
 }
 
-func length2(flatCoords []float64, offset int, ends []int, stride int) float64 {
+func length2(FlatCoord []float64, offset int, ends []int, Strd int) float64 {
 	var length float64
 	for _, end := range ends {
-		length += length1(flatCoords, offset, end, stride)
+		length += length1(FlatCoord, offset, end, Strd)
 		offset = end
 	}
 	return length
 }
 
-func length3(flatCoords []float64, offset int, endss [][]int, stride int) float64 {
+func length3(FlatCoord []float64, offset int, endss [][]int, Strd int) float64 {
 	var length float64
 	for _, ends := range endss {
-		length += length2(flatCoords, offset, ends, stride)
+		length += length2(FlatCoord, offset, ends, Strd)
 		offset = ends[len(ends)-1]
 	}
 	return length
 }
 
-func reverse1(flatCoords []float64, offset, end, stride int) {
-	for i, j := offset+stride, end; i <= j; i, j = i+stride, j-stride {
-		for k := 0; k < stride; k++ {
-			flatCoords[i-stride+k], flatCoords[j-stride+k] = flatCoords[j-stride+k], flatCoords[i-stride+k]
+func reverse1(FlatCoord []float64, offset, end, Strd int) {
+	for i, j := offset+Strd, end; i <= j; i, j = i+Strd, j-Strd {
+		for k := 0; k < Strd; k++ {
+			FlatCoord[i-Strd+k], FlatCoord[j-Strd+k] = FlatCoord[j-Strd+k], FlatCoord[i-Strd+k]
 		}
 	}
 }
 
-func reverse2(flatCoords []float64, offset int, ends []int, stride int) {
+func reverse2(FlatCoord []float64, offset int, ends []int, Strd int) {
 	for _, end := range ends {
-		reverse1(flatCoords, offset, end, stride)
+		reverse1(FlatCoord, offset, end, Strd)
 		offset = end
 	}
 }
 
-func reverse3(flatCoords []float64, offset int, endss [][]int, stride int) {
+func reverse3(FlatCoord []float64, offset int, endss [][]int, Strd int) {
 	for _, ends := range endss {
 		if len(ends) == 0 {
 			continue
 		}
-		reverse2(flatCoords, offset, ends, stride)
+		reverse2(FlatCoord, offset, ends, Strd)
 		offset = ends[len(ends)-1]
 	}
 }

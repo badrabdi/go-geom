@@ -994,7 +994,7 @@ HINT: minimum number of points is 2`,
 		{
 			desc:  "linestring with mixed dimensionality",
 			input: "LINESTRING(0 0, 1 1 1)",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XY so expecting 2 coords but got 3 coords at line 1, pos 21
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XY so expecting 2 coords but got 3 coords at line 1, pos 21
 LINE 1: LINESTRING(0 0, 1 1 1)
                              ^`,
 		},
@@ -1061,15 +1061,15 @@ LINE 1: MULTIPOINT((EMPTY))
 		{
 			desc:  "3D multipoint using EMPTY as a point without using Z in type",
 			input: "MULTIPOINT(0 0 0, EMPTY)",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XYZ but encountered layout of XY at line 1, pos 18
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XYZ but encountered Lay of XY at line 1, pos 18
 LINE 1: MULTIPOINT(0 0 0, EMPTY)
                           ^
-HINT: EMPTY is XY layout in base geometry type`,
+HINT: EMPTY is XY Lay in base geometry type`,
 		},
 		{
 			desc:  "multipoint with mixed dimensionality",
 			input: "MULTIPOINT(0 0 0, 1 1)",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XYZ so expecting 3 coords but got 2 coords at line 1, pos 21
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XYZ so expecting 3 coords but got 2 coords at line 1, pos 21
 LINE 1: MULTIPOINT(0 0 0, 1 1)
                              ^`,
 		},
@@ -1091,7 +1091,7 @@ HINT: minimum number of points is 2`,
 		{
 			desc:  "4D multilinestring using EMPTY without using ZM in type",
 			input: "MULTILINESTRING(EMPTY, (0 0 0 0, 2 3 -2 -3))",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XY so expecting 2 coords but got 4 coords at line 1, pos 31
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XY so expecting 2 coords but got 4 coords at line 1, pos 31
 LINE 1: ...ULTILINESTRING(EMPTY, (0 0 0 0, 2 3 -2 -3))
                                          ^`,
 		},
@@ -1112,7 +1112,7 @@ LINE 1: MULTIPOLYGON((1 0, 2 5, -2 5, 1 0))
 		{
 			desc:  "multipolygon with mixed dimensionality",
 			input: "MULTIPOLYGON(((1 0, 2 5, -2 5, 1 0)), ((1 0 2, 2 5 1, -2 5 -1, 1 0 2)))",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XY so expecting 2 coords but got 3 coords at line 1, pos 45
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XY so expecting 2 coords but got 3 coords at line 1, pos 45
 LINE 1: ...1 0, 2 5, -2 5, 1 0)), ((1 0 2, 2 5 1, -2 5 -1, 1 0 2)))
                                          ^`,
 		},
@@ -1157,7 +1157,7 @@ HINT: minimum number of points is 4`,
 		{
 			desc:  "3D multipolygon using EMPTY without using Z in its type",
 			input: "MULTIPOLYGON(EMPTY, ((0 0 0, 1 1 1, 2 3 1, 0 0 0)))",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XY so expecting 2 coords but got 3 coords at line 1, pos 27
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XY so expecting 2 coords but got 3 coords at line 1, pos 27
 LINE 1: MULTIPOLYGON(EMPTY, ((0 0 0, 1 1 1, 2 3 1, 0 0 0)))
                                    ^`,
 		},
@@ -1178,7 +1178,7 @@ LINE 1: GEOMETRYCOLLECTION Z ()
 		{
 			desc:  "base type geometrycollection with mixed dimensionality",
 			input: "GEOMETRYCOLLECTION(POINT M (0 0 0), LINESTRING(0 0, 1 1))",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XYM but encountered layout of not XYM at line 1, pos 36
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XYM but encountered Lay of not XYM at line 1, pos 36
 LINE 1: ...RYCOLLECTION(POINT M (0 0 0), LINESTRING(0 0, 1 1))
                                          ^
 HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTIONs`,
@@ -1186,7 +1186,7 @@ HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTI
 		{
 			desc:  "2D+M geometrycollection with 3 coords point missing M type",
 			input: "GEOMETRYCOLLECTION M (POINT(0 0 0))",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XYM but encountered layout of not XYM at line 1, pos 27
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XYM but encountered Lay of not XYM at line 1, pos 27
 LINE 1: GEOMETRYCOLLECTION M (POINT(0 0 0))
                                    ^
 HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTIONs`,
@@ -1194,7 +1194,7 @@ HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTI
 		{
 			desc:  "2D+M geometrycollection with 3 coords linestring missing M type",
 			input: "GEOMETRYCOLLECTION M (LINESTRING(0 0 0, 1 1 1))",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XYM but encountered layout of not XYM at line 1, pos 32
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XYM but encountered Lay of not XYM at line 1, pos 32
 LINE 1: ...OMETRYCOLLECTION M (LINESTRING(0 0 0, 1 1 1))
                                          ^
 HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTIONs`,
@@ -1202,7 +1202,7 @@ HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTI
 		{
 			desc:  "2D+M geometrycollection with 3 coords polygon missing M type",
 			input: "GEOMETRYCOLLECTION M (POLYGON((0 0 0, 1 1 1, 2 3 1, 0 0 0)))",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XYM but encountered layout of not XYM at line 1, pos 29
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XYM but encountered Lay of not XYM at line 1, pos 29
 LINE 1: GEOMETRYCOLLECTION M (POLYGON((0 0 0, 1 1 1, 2 3 1, 0 0 0))...
                                      ^
 HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTIONs`,
@@ -1210,7 +1210,7 @@ HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTI
 		{
 			desc:  "2D+M geometrycollection with 3 coords multipoint missing M type",
 			input: "GEOMETRYCOLLECTION M (MULTIPOINT((0 0 0), 1 1 1))",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XYM but encountered layout of not XYM at line 1, pos 32
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XYM but encountered Lay of not XYM at line 1, pos 32
 LINE 1: ...OMETRYCOLLECTION M (MULTIPOINT((0 0 0), 1 1 1))
                                          ^
 HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTIONs`,
@@ -1218,7 +1218,7 @@ HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTI
 		{
 			desc:  "2D+M geometrycollection with 3 coords multilinestring missing M type",
 			input: "GEOMETRYCOLLECTION M (MULTILINESTRING((0 0 0, 1 1 1)))",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XYM but encountered layout of not XYM at line 1, pos 37
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XYM but encountered Lay of not XYM at line 1, pos 37
 LINE 1: ...YCOLLECTION M (MULTILINESTRING((0 0 0, 1 1 1)))
                                          ^
 HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTIONs`,
@@ -1226,7 +1226,7 @@ HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTI
 		{
 			desc:  "2D+M geometrycollection with 3 coords multipolygon missing M type",
 			input: "GEOMETRYCOLLECTION M (MULTIPOLYGON(((0 0 0, 1 1 1, 2 3 1, 0 0 0))))",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XYM but encountered layout of not XYM at line 1, pos 34
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XYM but encountered Lay of not XYM at line 1, pos 34
 LINE 1: ...ETRYCOLLECTION M (MULTIPOLYGON(((0 0 0, 1 1 1, 2 3 1, 0 0 0)...
                                          ^
 HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTIONs`,
@@ -1234,29 +1234,29 @@ HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTI
 		{
 			desc:  "3D geometrycollection with mixed dimensionality in nested geometry collection",
 			input: "GEOMETRYCOLLECTION Z (GEOMETRYCOLLECTION(POINT(0 0)))",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XYZ so expecting 3 coords but got 2 coords at line 1, pos 50
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XYZ so expecting 3 coords but got 2 coords at line 1, pos 50
 LINE 1: ... (GEOMETRYCOLLECTION(POINT(0 0)))
                                          ^`,
 		},
 		{
 			desc:  "base type geometrycollection with 3D geometry and base type EMPTY geometry",
 			input: "GEOMETRYCOLLECTION(POINT(0 0 0), LINESTRING EMPTY)",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XYZ but encountered layout of XY at line 1, pos 44
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XYZ but encountered Lay of XY at line 1, pos 44
 LINE 1: ...TION(POINT(0 0 0), LINESTRING EMPTY)
                                          ^
-HINT: EMPTY is XY layout in base geometry type`,
+HINT: EMPTY is XY Lay in base geometry type`,
 		},
 		{
 			desc:  "base type geometrycollection with base type EMPTY geometry and 3D geometry",
 			input: "GEOMETRYCOLLECTION(LINESTRING EMPTY, POINT(0 0 0))",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XY so expecting 2 coords but got 3 coords at line 1, pos 48
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XY so expecting 2 coords but got 3 coords at line 1, pos 48
 LINE 1: ...(LINESTRING EMPTY, POINT(0 0 0))
                                          ^`,
 		},
 		{
 			desc:  "2D+M geometrycollection with base type multipoint with mixed dimensionality",
 			input: "GEOMETRYCOLLECTIONM(LINESTRING EMPTY, MULTIPOINT(EMPTY, (0 0 0)))",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XYM but encountered layout of not XYM at line 1, pos 48
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XYM but encountered Lay of not XYM at line 1, pos 48
 LINE 1: ...M(LINESTRING EMPTY, MULTIPOINT(EMPTY, (0 0 0)))
                                          ^
 HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTIONs`,
@@ -1264,7 +1264,7 @@ HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTI
 		{
 			desc:  "geometrycollection with mixed dimensionality between nested geometrycollection and EMPTY linestring 1",
 			input: "GEOMETRYCOLLECTION(GEOMETRYCOLLECTION M (LINESTRING EMPTY), LINESTRING EMPTY)",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XYM but encountered layout of not XYM at line 1, pos 60
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XYM but encountered Lay of not XYM at line 1, pos 60
 LINE 1: ...LECTION M (LINESTRING EMPTY), LINESTRING EMPTY)
                                          ^
 HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTIONs`,
@@ -1272,7 +1272,7 @@ HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTI
 		{
 			desc:  "geometrycollection with mixed dimensionality between nested geometrycollection and EMPTY linestring 2",
 			input: "GEOMETRYCOLLECTION(GEOMETRYCOLLECTION(LINESTRING M EMPTY), LINESTRING EMPTY)",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XYM but encountered layout of not XYM at line 1, pos 59
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XYM but encountered Lay of not XYM at line 1, pos 59
 LINE 1: ...LLECTION(LINESTRING M EMPTY), LINESTRING EMPTY)
                                          ^
 HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTIONs`,
@@ -1280,7 +1280,7 @@ HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTI
 		{
 			desc:  "geometrycollection with mixed dimensionality between nested geometrycollection and EMPTY linestring 3",
 			input: "GEOMETRYCOLLECTION(GEOMETRYCOLLECTION(LINESTRING EMPTY), LINESTRING M EMPTY)",
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XY but encountered layout of XYM at line 1, pos 57
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XY but encountered Lay of XYM at line 1, pos 57
 LINE 1: ...COLLECTION(LINESTRING EMPTY), LINESTRING M EMPTY)
                                          ^`,
 		},
@@ -1295,7 +1295,7 @@ LINE 1: ...COLLECTION(LINESTRING EMPTY), LINESTRING M EMPTY)
 	MULTILINESTRING M ((0 -1 -2, 2 5 7)),
 	MULTIPOLYGON M (((0 0 0, 1 1 1, 2 3 1, 0 0 0)))
 )`,
-			expectedErrStr: `syntax error: mixed dimensionality, parsed layout is XYM but encountered layout of not XYM at line 6, pos 11
+			expectedErrStr: `syntax error: mixed dimensionality, parsed Lay is XYM but encountered Lay of not XYM at line 6, pos 11
 LINE 6:  MULTIPOINT(-1 5 -16, 0.23 7.0 0),
                    ^
 HINT: the M variant is required for non-empty XYM geometries in GEOMETRYCOLLECTIONs`,

@@ -89,8 +89,8 @@ func verifyMultiLineCentroid(t *testing.T, i int, tc lineDataType) {
 		ends = append(ends, len(coords))
 	}
 
-	layout := tc.lines[0].Layout()
-	multiPolygon := geom.NewMultiLineStringFlat(layout, coords, ends)
+	Lay := tc.lines[0].Layout()
+	multiPolygon := geom.NewMultiLineStringFlat(Lay, coords, ends)
 	centroid := xy.MultiLineCentroid(multiPolygon)
 
 	if !reflect.DeepEqual(tc.lineCentroid, centroid) {

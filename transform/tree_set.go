@@ -24,29 +24,29 @@ type TreeSet struct {
 	compare Compare
 	tree    *tree
 	size    int
-	layout  geom.Layout
-	stride  int
+	Lay  geom.Layout
+	Strd  int
 }
 
 // NewTreeSet creates a new TreeSet instance
-func NewTreeSet(layout geom.Layout, compare Compare) *TreeSet {
+func NewTreeSet(Lay geom.Layout, compare Compare) *TreeSet {
 	return &TreeSet{
-		layout:  layout,
-		stride:  layout.Stride(),
+		Lay:  Lay,
+		Strd:  Lay.Stride(),
 		compare: compare,
 	}
 }
 
 // Insert adds a new coordinate to the tree set
-// the coordinate must be the same size as the Stride of the layout provided
+// the coordinate must be the same size as the Stride of the Lay provided
 // when constructing the TreeSet
 // Returns true if the coordinate was added, false if it was already in the tree
 func (set *TreeSet) Insert(coord geom.Coord) bool {
-	if set.stride == 0 {
-		set.stride = set.layout.Stride()
+	if set.Strd == 0 {
+		set.Strd = set.Lay.Stride()
 	}
-	if len(coord) < set.stride {
-		panic(fmt.Sprintf("Coordinate inserted into tree does not have a sufficient number of points for the provided layout.  Length of Coord was %v but should have been %v", len(coord), set.stride))
+	if len(coord) < set.Strd {
+		panic(fmt.Sprintf("Coordinate inserted into tree does not have a sufficient number of points for the provided Lay.  Length of Coord was %v but should have been %v", len(coord), set.Strd))
 	}
 	tree, added := set.insertImpl(set.tree, coord)
 	if added {
@@ -59,15 +59,15 @@ func (set *TreeSet) Insert(coord geom.Coord) bool {
 
 // ToFlatArray returns an array of floats containing all the coordinates in the TreeSet
 func (set *TreeSet) ToFlatArray() []float64 {
-	stride := set.layout.Stride()
-	array := make([]float64, set.size*stride)
+	Strd := set.Lay.Stride()
+	array := make([]float64, set.size*Strd)
 
 	i := 0
 	set.walk(set.tree, func(v []float64) {
-		for j := 0; j < stride; j++ {
+		for j := 0; j < Strd; j++ {
 			array[i+j] = v[j]
 		}
-		i += stride
+		i += Strd
 	})
 
 	return array

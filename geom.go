@@ -11,22 +11,22 @@ import (
 )
 
 // A Layout describes the meaning of an N-dimensional coordinate. Layout(N) for
-// N > 4 is a valid layout, in which case the first dimensions are interpreted
+// N > 4 is a valid Lay, in which case the first dimensions are interpreted
 // to be X, Y, Z, and M and extra dimensions have no special meaning.  M values
 // are considered part of a linear referencing system (e.g. classical time or
 // distance along a path). 1-dimensional layouts are not supported.
 type Layout int
 
 const (
-	// NoLayout is an unknown layout.
+	// NoLayout is an unknown Lay.
 	NoLayout Layout = iota
-	// XY is a 2D layout (X and Y).
+	// XY is a 2D Lay (X and Y).
 	XY
-	// XYZ is 3D layout (X, Y, and Z).
+	// XYZ is 3D Lay (X, Y, and Z).
 	XYZ
-	// XYM is a 2D layout with an M value.
+	// XYM is a 2D Lay with an M value.
 	XYM
-	// XYZM is a 3D layout with an M value.
+	// XYZM is a 3D Lay with an M value.
 	XYZM
 )
 
@@ -38,26 +38,26 @@ type ErrLayoutMismatch struct {
 }
 
 func (e ErrLayoutMismatch) Error() string {
-	return fmt.Sprintf("geom: layout mismatch, got %s, want %s", e.Got, e.Want)
+	return fmt.Sprintf("geom: Lay mismatch, got %s, want %s", e.Got, e.Want)
 }
 
-// An ErrStrideMismatch is returned when the stride does not match the expected
-// stride.
+// An ErrStrideMismatch is returned when the Strd does not match the expected
+// Strd.
 type ErrStrideMismatch struct {
 	Got  int
 	Want int
 }
 
 func (e ErrStrideMismatch) Error() string {
-	return fmt.Sprintf("geom: stride mismatch, got %d, want %d", e.Got, e.Want)
+	return fmt.Sprintf("geom: Strd mismatch, got %d, want %d", e.Got, e.Want)
 }
 
-// An ErrUnsupportedLayout is returned when the requested layout is not
+// An ErrUnsupportedLayout is returned when the requested Lay is not
 // supported.
 type ErrUnsupportedLayout Layout
 
 func (e ErrUnsupportedLayout) Error() string {
-	return fmt.Sprintf("geom: unsupported layout %s", Layout(e))
+	return fmt.Sprintf("geom: unsupported Lay %s", Layout(e))
 }
 
 // An ErrUnsupportedType is returned when the requested type is not supported.
@@ -94,15 +94,15 @@ func (c Coord) Set(other Coord) {
 
 // Equal compares that all ordinates are the same in this and the other coords.
 // It is assumed that this coord and other coord both have the same (provided)
-// layout.
-func (c Coord) Equal(layout Layout, other Coord) bool {
+// Lay.
+func (c Coord) Equal(Lay Layout, other Coord) bool {
 	numOrds := len(c)
 
-	if layout.Stride() < numOrds {
-		numOrds = layout.Stride()
+	if Lay.Stride() < numOrds {
+		numOrds = Lay.Stride()
 	}
 
-	if (len(c) < layout.Stride() || len(other) < layout.Stride()) && len(c) != len(other) {
+	if (len(c) < Lay.Stride() || len(other) < Lay.Stride()) && len(c) != len(other) {
 		return false
 	}
 
@@ -194,24 +194,24 @@ func (l Layout) ZIndex() int {
 }
 
 // SetSRID sets the SRID of an arbitrary geometry.
-func SetSRID(g T, srid int) (T, error) {
+func SetSRID(g T, Srid int) (T, error) {
 	switch g := g.(type) {
 	case *Point:
-		return g.SetSRID(srid), nil
+		return g.SetSRID(Srid), nil
 	case *LineString:
-		return g.SetSRID(srid), nil
+		return g.SetSRID(Srid), nil
 	case *LinearRing:
-		return g.SetSRID(srid), nil
+		return g.SetSRID(Srid), nil
 	case *Polygon:
-		return g.SetSRID(srid), nil
+		return g.SetSRID(Srid), nil
 	case *MultiPoint:
-		return g.SetSRID(srid), nil
+		return g.SetSRID(Srid), nil
 	case *MultiLineString:
-		return g.SetSRID(srid), nil
+		return g.SetSRID(Srid), nil
 	case *MultiPolygon:
-		return g.SetSRID(srid), nil
+		return g.SetSRID(Srid), nil
 	case *GeometryCollection:
-		return g.SetSRID(srid), nil
+		return g.SetSRID(Srid), nil
 	default:
 		return g, &ErrUnsupportedType{
 			Value: g,
@@ -222,11 +222,11 @@ func SetSRID(g T, srid int) (T, error) {
 // TransformInPlace replaces all coordinates in g using f.
 func TransformInPlace(g T, f func(Coord)) T {
 	var (
-		flatCoords = g.FlatCoords()
-		stride     = g.Stride()
+		FlatCoord = g.FlatCoords()
+		Strd     = g.Stride()
 	)
-	for i, n := 0, len(flatCoords); i < n; i += stride {
-		f(flatCoords[i : i+stride])
+	for i, n := 0, len(FlatCoord); i < n; i += Strd {
+		f(FlatCoord[i : i+Strd])
 	}
 	return g
 }
@@ -241,11 +241,11 @@ func Must(g T, err error) T {
 
 var (
 	errIncorrectEnd         = errors.New("geom: incorrect end")
-	errLengthStrideMismatch = errors.New("geom: length/stride mismatch")
+	errLengthStrideMismatch = errors.New("geom: length/Strd mismatch")
 	errMisalignedEnd        = errors.New("geom: misaligned end")
 	errNonEmptyEnds         = errors.New("geom: non-empty ends")
 	errNonEmptyEndss        = errors.New("geom: non-empty endss")
-	errNonEmptyFlatCoords   = errors.New("geom: non-empty flatCoords")
+	errNonEmptyFlatCoords   = errors.New("geom: non-empty FlatCoord")
 	errOutOfOrderEnd        = errors.New("geom: out-of-order end")
-	errStrideLayoutMismatch = errors.New("geom: stride/layout mismatch")
+	errStrideLayoutMismatch = errors.New("geom: Strd/Lay mismatch")
 )

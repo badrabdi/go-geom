@@ -11,9 +11,9 @@ import (
 var _ T = &MultiPolygon{}
 
 type expectedMultiPolygon struct {
-	layout     Layout
-	stride     int
-	flatCoords []float64
+	Lay     Layout
+	Strd     int
+	FlatCoord []float64
 	endss      [][]int
 	coords     [][][]Coord
 	bounds     *Bounds
@@ -23,10 +23,10 @@ type expectedMultiPolygon struct {
 func (g *MultiPolygon) assertEquals(t *testing.T, e *expectedMultiPolygon) {
 	t.Helper()
 	assert.NoError(t, g.verify())
-	assert.Equal(t, e.layout, g.Layout())
-	assert.Equal(t, e.stride, g.Stride())
+	assert.Equal(t, e.Lay, g.Layout())
+	assert.Equal(t, e.Strd, g.Stride())
 	assert.Equal(t, e.coords, g.Coords())
-	assert.Equal(t, e.flatCoords, g.FlatCoords())
+	assert.Equal(t, e.FlatCoord, g.FlatCoords())
 	assert.Nil(t, g.Ends())
 	assert.Equal(t, e.endss, g.Endss())
 	assert.Equal(t, e.bounds, g.Bounds())
@@ -45,9 +45,9 @@ func TestMultiPolygon(t *testing.T) {
 		{
 			mp: NewMultiPolygon(XY).MustSetCoords([][][]Coord{{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}}),
 			expected: &expectedMultiPolygon{
-				layout:     XY,
-				stride:     2,
-				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+				Lay:     XY,
+				Strd:     2,
+				FlatCoord: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 				endss:      [][]int{{6, 12}},
 				coords:     [][][]Coord{{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}},
 				bounds:     NewBounds(XY).Set(1, 2, 11, 12),
@@ -57,9 +57,9 @@ func TestMultiPolygon(t *testing.T) {
 		{
 			mp: NewMultiPolygon(XY),
 			expected: &expectedMultiPolygon{
-				layout:     XY,
-				stride:     2,
-				flatCoords: nil,
+				Lay:     XY,
+				Strd:     2,
+				FlatCoord: nil,
 				endss:      nil,
 				coords:     [][][]Coord{},
 				bounds:     NewBounds(XY),
@@ -69,9 +69,9 @@ func TestMultiPolygon(t *testing.T) {
 		{
 			mp: NewMultiPolygon(XY).MustSetCoords([][][]Coord{{}, {}}),
 			expected: &expectedMultiPolygon{
-				layout:     XY,
-				stride:     2,
-				flatCoords: nil,
+				Lay:     XY,
+				Strd:     2,
+				FlatCoord: nil,
 				endss:      [][]int{nil, nil},
 				coords:     [][][]Coord{{}, {}},
 				bounds:     NewBounds(XY),
@@ -81,9 +81,9 @@ func TestMultiPolygon(t *testing.T) {
 		{
 			mp: NewMultiPolygon(XY).MustSetCoords([][][]Coord{{}, {}, {{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}, {}}),
 			expected: &expectedMultiPolygon{
-				layout:     XY,
-				stride:     2,
-				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+				Lay:     XY,
+				Strd:     2,
+				FlatCoord: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 				endss:      [][]int{nil, nil, {6, 12}, nil},
 				coords:     [][][]Coord{{}, {}, {{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}, {}},
 				bounds:     NewBounds(XY).Set(1, 2, 11, 12),
@@ -93,9 +93,9 @@ func TestMultiPolygon(t *testing.T) {
 		{
 			mp: NewMultiPolygon(XY).MustSetCoords([][][]Coord{{{{1, 2}, {4, 5}, {6, 7}, {1, 2}}}, {}, {}, {{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}, {}}),
 			expected: &expectedMultiPolygon{
-				layout:     XY,
-				stride:     2,
-				flatCoords: []float64{1, 2, 4, 5, 6, 7, 1, 2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+				Lay:     XY,
+				Strd:     2,
+				FlatCoord: []float64{1, 2, 4, 5, 6, 7, 1, 2, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 				endss:      [][]int{{8}, nil, nil, {14, 20}, nil},
 				coords:     [][][]Coord{{{{1, 2}, {4, 5}, {6, 7}, {1, 2}}}, {}, {}, {{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}, {}},
 				bounds:     NewBounds(XY).Set(1, 2, 11, 12),

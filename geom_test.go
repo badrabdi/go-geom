@@ -211,19 +211,19 @@ func TestVerify(t *testing.T) {
 		want error
 	}{
 		{
-			&geom0{},
+			&Geom0{},
 			nil,
 		},
 		{
-			&geom0{NoLayout, 0, Coord{0, 0}, 0},
+			&Geom0{NoLayout, 0, Coord{0, 0}, 0},
 			errNonEmptyFlatCoords,
 		},
 		{
-			&geom0{XY, 1, Coord{0, 0}, 0},
+			&Geom0{XY, 1, Coord{0, 0}, 0},
 			errStrideLayoutMismatch,
 		},
 		{
-			&geom0{XY, 2, Coord{0}, 0},
+			&Geom0{XY, 2, Coord{0}, 0},
 			errLengthStrideMismatch,
 		},
 		{
@@ -231,15 +231,15 @@ func TestVerify(t *testing.T) {
 			nil,
 		},
 		{
-			&geom1{geom0{NoLayout, 0, Coord{0}, 0}},
+			&geom1{Geom0{NoLayout, 0, Coord{0}, 0}},
 			errNonEmptyFlatCoords,
 		},
 		{
-			&geom1{geom0{XY, 1, Coord{0, 0}, 0}},
+			&geom1{Geom0{XY, 1, Coord{0, 0}, 0}},
 			errStrideLayoutMismatch,
 		},
 		{
-			&geom1{geom0{XY, 2, Coord{0}, 0}},
+			&geom1{Geom0{XY, 2, Coord{0}, 0}},
 			errLengthStrideMismatch,
 		},
 		{
@@ -247,39 +247,39 @@ func TestVerify(t *testing.T) {
 			nil,
 		},
 		{
-			&geom2{geom1{geom0{NoLayout, 0, Coord{0}, 0}}, []int{}},
+			&geom2{geom1{Geom0{NoLayout, 0, Coord{0}, 0}}, []int{}},
 			errNonEmptyFlatCoords,
 		},
 		{
-			&geom2{geom1{geom0{NoLayout, 0, Coord{}, 0}}, []int{4}},
+			&geom2{geom1{Geom0{NoLayout, 0, Coord{}, 0}}, []int{4}},
 			errNonEmptyEnds,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, Coord{0}, 0}}, []int{4}},
+			&geom2{geom1{Geom0{XY, 2, Coord{0}, 0}}, []int{4}},
 			errLengthStrideMismatch,
 		},
 		{
-			&geom2{geom1{geom0{XY, 1, Coord{0, 0, 0, 0}, 0}}, []int{-1}},
+			&geom2{geom1{Geom0{XY, 1, Coord{0, 0, 0, 0}, 0}}, []int{-1}},
 			errStrideLayoutMismatch,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0}, 0}}, []int{-1}},
+			&geom2{geom1{Geom0{XY, 2, Coord{0, 0, 0, 0}, 0}}, []int{-1}},
 			errMisalignedEnd,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0}, 0}}, []int{3}},
+			&geom2{geom1{Geom0{XY, 2, Coord{0, 0, 0, 0}, 0}}, []int{3}},
 			errMisalignedEnd,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0, 0, 0, 0, 0}, 0}}, []int{8, 4}},
+			&geom2{geom1{Geom0{XY, 2, Coord{0, 0, 0, 0, 0, 0, 0, 0}, 0}}, []int{8, 4}},
 			errOutOfOrderEnd,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0, 0, 0, 0, 0}, 0}}, []int{4, 4}},
+			&geom2{geom1{Geom0{XY, 2, Coord{0, 0, 0, 0, 0, 0, 0, 0}, 0}}, []int{4, 4}},
 			errIncorrectEnd,
 		},
 		{
-			&geom2{geom1{geom0{XY, 2, Coord{0, 0, 0, 0, 0, 0, 0, 0}, 0}}, []int{4, 12}},
+			&geom2{geom1{Geom0{XY, 2, Coord{0, 0, 0, 0, 0, 0, 0, 0}, 0}}, []int{4, 12}},
 			errIncorrectEnd,
 		},
 		{
@@ -287,31 +287,31 @@ func TestVerify(t *testing.T) {
 			nil,
 		},
 		{
-			&geom3{geom1{geom0{XY, 3, Coord{}, 0}}, [][]int{}},
+			&geom3{geom1{Geom0{XY, 3, Coord{}, 0}}, [][]int{}},
 			errStrideLayoutMismatch,
 		},
 		{
-			&geom3{geom1{geom0{NoLayout, 0, Coord{0}, 0}}, [][]int{}},
+			&geom3{geom1{Geom0{NoLayout, 0, Coord{0}, 0}}, [][]int{}},
 			errNonEmptyFlatCoords,
 		},
 		{
-			&geom3{geom1{geom0{NoLayout, 0, Coord{}, 0}}, [][]int{{0}}},
+			&geom3{geom1{Geom0{NoLayout, 0, Coord{}, 0}}, [][]int{{0}}},
 			errNonEmptyEndss,
 		},
 		{
-			&geom3{geom1{geom0{XY, 2, Coord{0}, 0}}, [][]int{}},
+			&geom3{geom1{Geom0{XY, 2, Coord{0}, 0}}, [][]int{}},
 			errLengthStrideMismatch,
 		},
 		{
-			&geom3{geom1{geom0{XY, 2, Coord{0, 0}, 0}}, [][]int{{1}}},
+			&geom3{geom1{Geom0{XY, 2, Coord{0, 0}, 0}}, [][]int{{1}}},
 			errMisalignedEnd,
 		},
 		{
-			&geom3{geom1{geom0{XY, 2, Coord{0, 0, 0, 0}, 0}}, [][]int{{4, 2}}},
+			&geom3{geom1{Geom0{XY, 2, Coord{0, 0, 0, 0}, 0}}, [][]int{{4, 2}}},
 			errOutOfOrderEnd,
 		},
 		{
-			&geom3{geom1{geom0{XY, 2, Coord{0, 0, 0, 0}, 0}}, [][]int{{2}}},
+			&geom3{geom1{Geom0{XY, 2, Coord{0, 0, 0, 0}, 0}}, [][]int{{2}}},
 			errIncorrectEnd,
 		},
 	} {
@@ -322,101 +322,101 @@ func TestVerify(t *testing.T) {
 func TestEqualCoords(t *testing.T) {
 	for _, tc := range []struct {
 		c1, c2 Coord
-		layout Layout
+		Lay Layout
 		equal  bool
 	}{
 		{
 			c1:     Coord{},
 			c2:     Coord{0, 0},
-			layout: XY,
+			Lay: XY,
 			equal:  false,
 		},
 		{
 			c1:     Coord{},
 			c2:     Coord{},
-			layout: XY,
+			Lay: XY,
 			equal:  true,
 		},
 		{
 			c1:     Coord{1, 0},
 			c2:     Coord{},
-			layout: XY,
+			Lay: XY,
 			equal:  false,
 		},
 		{
 			c1:     Coord{1, 0},
 			c2:     Coord{1},
-			layout: XY,
+			Lay: XY,
 			equal:  false,
 		},
 		{
 			c1:     Coord{1},
 			c2:     Coord{},
-			layout: XY,
+			Lay: XY,
 			equal:  false,
 		},
 		{
 			c1:     Coord{1},
 			c2:     Coord{1},
-			layout: XY,
+			Lay: XY,
 			equal:  true,
 		},
 		{
 			c1:     Coord{1},
 			c2:     Coord{0},
-			layout: XY,
+			Lay: XY,
 			equal:  false,
 		},
 		{
 			c1:     Coord{0, 0},
 			c2:     Coord{0, 0},
-			layout: XY,
+			Lay: XY,
 			equal:  true,
 		},
 		{
 			c1:     Coord{0, 0},
 			c2:     Coord{1, 0},
-			layout: XY,
+			Lay: XY,
 			equal:  false,
 		},
 		{
 			c1:     Coord{0, 1},
 			c2:     Coord{0, 0},
-			layout: XY,
+			Lay: XY,
 			equal:  false,
 		},
 		{
 			c1:     Coord{0, 0, 3},
 			c2:     Coord{0, 0},
-			layout: XY,
+			Lay: XY,
 			equal:  true,
 		},
 		{
 			c1:     Coord{0, 0, 3},
 			c2:     Coord{0, 0, 3},
-			layout: XYZ,
+			Lay: XYZ,
 			equal:  true,
 		},
 		{
 			c1:     Coord{0, 0, 3},
 			c2:     Coord{0, 0, 4},
-			layout: XYZ,
+			Lay: XYZ,
 			equal:  false,
 		},
 		{
 			c1:     Coord{0, 0, 3, 4, 5, 6, 7, 8, 9, 10},
 			c2:     Coord{0, 0, 3, 4, 5, 6, 7, 8, 9, 10},
-			layout: Layout(10),
+			Lay: Layout(10),
 			equal:  true,
 		},
 		{
 			c1:     Coord{0, 0, 3, 4, 5, 6, 7, 8, 9, 10},
 			c2:     Coord{0, 0, 3, 4, 5, 6, 8, 8, 9, 10},
-			layout: Layout(10),
+			Lay: Layout(10),
 			equal:  false,
 		},
 	} {
-		assert.Equal(t, tc.equal, tc.c1.Equal(tc.layout, tc.c2))
+		assert.Equal(t, tc.equal, tc.c1.Equal(tc.Lay, tc.c2))
 	}
 }
 
@@ -511,35 +511,35 @@ func TestSetCoord(t *testing.T) {
 	for _, tc := range []struct {
 		src, dest Coord
 		expected  Coord
-		layout    Layout
+		Lay    Layout
 	}{
 		{
 			src:      Coord{0, 0},
 			dest:     Coord{1, 1},
 			expected: Coord{0, 0},
-			layout:   XY,
+			Lay:   XY,
 		},
 		{
 			src:      Coord{1, 0},
 			dest:     Coord{},
 			expected: Coord{},
-			layout:   Layout(0),
+			Lay:   Layout(0),
 		},
 		{
 			src:      Coord{},
 			dest:     Coord{1, 2},
 			expected: Coord{1, 2},
-			layout:   XY,
+			Lay:   XY,
 		},
 		{
 			src:      Coord{3},
 			dest:     Coord{1, 2},
 			expected: Coord{3, 2},
-			layout:   XY,
+			Lay:   XY,
 		},
 	} {
 		tc.dest.Set(tc.src)
-		assert.True(t, tc.dest.Equal(tc.layout, tc.expected))
+		assert.True(t, tc.dest.Equal(tc.Lay, tc.expected))
 	}
 }
 

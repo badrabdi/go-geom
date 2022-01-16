@@ -6,16 +6,16 @@ type MultiLineString struct {
 }
 
 // NewMultiLineString returns a new MultiLineString with no LineStrings.
-func NewMultiLineString(layout Layout) *MultiLineString {
-	return NewMultiLineStringFlat(layout, nil, nil)
+func NewMultiLineString(Lay Layout) *MultiLineString {
+	return NewMultiLineStringFlat(Lay, nil, nil)
 }
 
 // NewMultiLineStringFlat returns a new MultiLineString with the given flat coordinates.
-func NewMultiLineStringFlat(layout Layout, flatCoords []float64, ends []int) *MultiLineString {
+func NewMultiLineStringFlat(Lay Layout, FlatCoord []float64, ends []int) *MultiLineString {
 	g := new(MultiLineString)
-	g.layout = layout
-	g.stride = layout.Stride()
-	g.flatCoords = flatCoords
+	g.Lay = Lay
+	g.Strd = Lay.Stride()
+	g.FlatCoord = FlatCoord
 	g.ends = ends
 	return g
 }
@@ -32,7 +32,7 @@ func (g *MultiLineString) Clone() *MultiLineString {
 
 // Length returns the sum of the length of the LineStrings.
 func (g *MultiLineString) Length() float64 {
-	return length2(g.flatCoords, 0, g.ends, g.stride)
+	return length2(g.FlatCoord, 0, g.ends, g.Strd)
 }
 
 // LineString returns the ith LineString.
@@ -42,9 +42,9 @@ func (g *MultiLineString) LineString(i int) *LineString {
 		offset = g.ends[i-1]
 	}
 	if offset == g.ends[i] {
-		return NewLineString(g.layout)
+		return NewLineString(g.Lay)
 	}
-	return NewLineStringFlat(g.layout, g.flatCoords[offset:g.ends[i]])
+	return NewLineStringFlat(g.Lay, g.FlatCoord[offset:g.ends[i]])
 }
 
 // MustSetCoords sets the coordinates and panics on any error.
@@ -60,11 +60,11 @@ func (g *MultiLineString) NumLineStrings() int {
 
 // Push appends a LineString.
 func (g *MultiLineString) Push(ls *LineString) error {
-	if ls.layout != g.layout {
-		return ErrLayoutMismatch{Got: ls.layout, Want: g.layout}
+	if ls.Lay != g.Lay {
+		return ErrLayoutMismatch{Got: ls.Lay, Want: g.Lay}
 	}
-	g.flatCoords = append(g.flatCoords, ls.flatCoords...)
-	g.ends = append(g.ends, len(g.flatCoords))
+	g.FlatCoord = append(g.FlatCoord, ls.FlatCoord...)
+	g.ends = append(g.ends, len(g.FlatCoord))
 	return nil
 }
 
@@ -77,8 +77,8 @@ func (g *MultiLineString) SetCoords(coords [][]Coord) (*MultiLineString, error) 
 }
 
 // SetSRID sets the SRID of g.
-func (g *MultiLineString) SetSRID(srid int) *MultiLineString {
-	g.srid = srid
+func (g *MultiLineString) SetSRID(Srid int) *MultiLineString {
+	g.Srid = Srid
 	return g
 }
 

@@ -6,23 +6,23 @@ type MultiPolygon struct {
 }
 
 // NewMultiPolygon returns a new MultiPolygon with no Polygons.
-func NewMultiPolygon(layout Layout) *MultiPolygon {
-	return NewMultiPolygonFlat(layout, nil, nil)
+func NewMultiPolygon(Lay Layout) *MultiPolygon {
+	return NewMultiPolygonFlat(Lay, nil, nil)
 }
 
 // NewMultiPolygonFlat returns a new MultiPolygon with the given flat coordinates.
-func NewMultiPolygonFlat(layout Layout, flatCoords []float64, endss [][]int) *MultiPolygon {
+func NewMultiPolygonFlat(Lay Layout, FlatCoord []float64, endss [][]int) *MultiPolygon {
 	g := new(MultiPolygon)
-	g.layout = layout
-	g.stride = layout.Stride()
-	g.flatCoords = flatCoords
+	g.Lay = Lay
+	g.Strd = Lay.Stride()
+	g.FlatCoord = FlatCoord
 	g.endss = endss
 	return g
 }
 
 // Area returns the sum of the area of the individual Polygons.
 func (g *MultiPolygon) Area() float64 {
-	return doubleArea3(g.flatCoords, 0, g.endss, g.stride) / 2
+	return doubleArea3(g.FlatCoord, 0, g.endss, g.Strd) / 2
 }
 
 // Clone returns a deep copy.
@@ -32,7 +32,7 @@ func (g *MultiPolygon) Clone() *MultiPolygon {
 
 // Length returns the sum of the perimeters of the Polygons.
 func (g *MultiPolygon) Length() float64 {
-	return length3(g.flatCoords, 0, g.endss, g.stride)
+	return length3(g.FlatCoord, 0, g.endss, g.Strd)
 }
 
 // MustSetCoords sets the coordinates and panics on any error.
@@ -49,7 +49,7 @@ func (g *MultiPolygon) NumPolygons() int {
 // Polygon returns the ith Polygon.
 func (g *MultiPolygon) Polygon(i int) *Polygon {
 	if len(g.endss[i]) == 0 {
-		return NewPolygon(g.layout)
+		return NewPolygon(g.Lay)
 	}
 	// Find the offset from the previous non-empty polygon element.
 	offset := 0
@@ -70,15 +70,15 @@ func (g *MultiPolygon) Polygon(i int) *Polygon {
 			ends[j] = end - offset
 		}
 	}
-	return NewPolygonFlat(g.layout, g.flatCoords[offset:g.endss[i][len(g.endss[i])-1]], ends)
+	return NewPolygonFlat(g.Lay, g.FlatCoord[offset:g.endss[i][len(g.endss[i])-1]], ends)
 }
 
 // Push appends a Polygon.
 func (g *MultiPolygon) Push(p *Polygon) error {
-	if p.layout != g.layout {
-		return ErrLayoutMismatch{Got: p.layout, Want: g.layout}
+	if p.Lay != g.Lay {
+		return ErrLayoutMismatch{Got: p.Lay, Want: g.Lay}
 	}
-	offset := len(g.flatCoords)
+	offset := len(g.FlatCoord)
 	var ends []int
 	if len(p.ends) > 0 {
 		ends = make([]int, len(p.ends))
@@ -90,7 +90,7 @@ func (g *MultiPolygon) Push(p *Polygon) error {
 			}
 		}
 	}
-	g.flatCoords = append(g.flatCoords, p.flatCoords...)
+	g.FlatCoord = append(g.FlatCoord, p.FlatCoord...)
 	g.endss = append(g.endss, ends)
 	return nil
 }
@@ -104,8 +104,8 @@ func (g *MultiPolygon) SetCoords(coords [][][]Coord) (*MultiPolygon, error) {
 }
 
 // SetSRID sets the SRID of g.
-func (g *MultiPolygon) SetSRID(srid int) *MultiPolygon {
-	g.srid = srid
+func (g *MultiPolygon) SetSRID(Srid int) *MultiPolygon {
+	g.Srid = Srid
 	return g
 }
 

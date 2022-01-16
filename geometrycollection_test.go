@@ -11,16 +11,16 @@ import (
 var _ T = &GeometryCollection{}
 
 type expectedGeometryCollection struct {
-	layout Layout
-	stride int
+	Lay Layout
+	Strd int
 	bounds *Bounds
 	empty  bool
 }
 
 func (g *GeometryCollection) assertEqual(t *testing.T, e *expectedGeometryCollection, geoms []T) {
 	t.Helper()
-	assert.Equal(t, e.layout, g.Layout())
-	assert.Equal(t, e.stride, g.Stride())
+	assert.Equal(t, e.Lay, g.Layout())
+	assert.Equal(t, e.Strd, g.Stride())
 	assert.Equal(t, e.bounds, g.Bounds())
 	assert.Panics(t, func() { g.FlatCoords() })
 	assert.Panics(t, func() { g.Ends() })
@@ -40,8 +40,8 @@ func TestGeometryCollection(t *testing.T) {
 	}{
 		{
 			expected: &expectedGeometryCollection{
-				layout: NoLayout,
-				stride: 0,
+				Lay: NoLayout,
+				Strd: 0,
 				bounds: NewBounds(NoLayout),
 				empty:  true,
 			},
@@ -51,8 +51,8 @@ func TestGeometryCollection(t *testing.T) {
 				NewPoint(XY),
 			},
 			expected: &expectedGeometryCollection{
-				layout: XY,
-				stride: 2,
+				Lay: XY,
+				Strd: 2,
 				bounds: NewBounds(XY).SetCoords(Coord{0, 0}, Coord{0, 0}),
 				empty:  false,
 			},
@@ -63,8 +63,8 @@ func TestGeometryCollection(t *testing.T) {
 				NewLineString(XY),
 			},
 			expected: &expectedGeometryCollection{
-				layout: XY,
-				stride: 2,
+				Lay: XY,
+				Strd: 2,
 				bounds: NewBounds(XY).SetCoords(Coord{0, 0}, Coord{0, 0}),
 				empty:  false,
 			},
@@ -75,8 +75,8 @@ func TestGeometryCollection(t *testing.T) {
 				NewPolygon(XY),
 			},
 			expected: &expectedGeometryCollection{
-				layout: XY,
-				stride: 2,
+				Lay: XY,
+				Strd: 2,
 				bounds: NewBounds(XY),
 				empty:  true,
 			},
@@ -87,8 +87,8 @@ func TestGeometryCollection(t *testing.T) {
 				NewPoint(XY).MustSetCoords(Coord{3, 4}),
 			},
 			expected: &expectedGeometryCollection{
-				layout: XY,
-				stride: 2,
+				Lay: XY,
+				Strd: 2,
 				bounds: NewBounds(XY).SetCoords(Coord{1, 2}, Coord{3, 4}),
 				empty:  false,
 			},
@@ -99,8 +99,8 @@ func TestGeometryCollection(t *testing.T) {
 				NewPoint(XYZ).MustSetCoords(Coord{3, 4, 5}),
 			},
 			expected: &expectedGeometryCollection{
-				layout: XYZ,
-				stride: 3,
+				Lay: XYZ,
+				Strd: 3,
 				bounds: NewBounds(XYZ).SetCoords(Coord{1, 2, 5}, Coord{3, 4, 5}),
 				empty:  false,
 			},
@@ -111,8 +111,8 @@ func TestGeometryCollection(t *testing.T) {
 				NewPoint(XYM).MustSetCoords(Coord{3, 4, 5}),
 			},
 			expected: &expectedGeometryCollection{
-				layout: XYM,
-				stride: 3,
+				Lay: XYM,
+				Strd: 3,
 				bounds: NewBounds(XYM).SetCoords(Coord{1, 2, 5}, Coord{3, 4, 5}),
 				empty:  false,
 			},
@@ -123,8 +123,8 @@ func TestGeometryCollection(t *testing.T) {
 				NewPoint(XYM).MustSetCoords(Coord{4, 5, 6}),
 			},
 			expected: &expectedGeometryCollection{
-				layout: XYZM,
-				stride: 4,
+				Lay: XYZM,
+				Strd: 4,
 				bounds: NewBounds(XYZM).SetCoords(Coord{1, 2, 3, 6}, Coord{4, 5, 3, 6}),
 				empty:  false,
 			},
@@ -135,8 +135,8 @@ func TestGeometryCollection(t *testing.T) {
 				NewPoint(XYZ).MustSetCoords(Coord{4, 5, 6}),
 			},
 			expected: &expectedGeometryCollection{
-				layout: XYZM,
-				stride: 4,
+				Lay: XYZM,
+				Strd: 4,
 				bounds: NewBounds(XYZM).SetCoords(Coord{1, 2, 6, 3}, Coord{4, 5, 6, 3}),
 				empty:  false,
 			},

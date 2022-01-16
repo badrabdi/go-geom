@@ -6,18 +6,18 @@ type LineString struct {
 	geom1
 }
 
-// NewLineString returns a new LineString with layout l and no control points.
+// NewLineString returns a new LineString with Lay l and no control points.
 func NewLineString(l Layout) *LineString {
 	return NewLineStringFlat(l, nil)
 }
 
-// NewLineStringFlat returns a new LineString with layout l and control points
-// flatCoords.
-func NewLineStringFlat(layout Layout, flatCoords []float64) *LineString {
+// NewLineStringFlat returns a new LineString with Lay l and control points
+// FlatCoord.
+func NewLineStringFlat(Lay Layout, FlatCoord []float64) *LineString {
 	g := new(LineString)
-	g.layout = layout
-	g.stride = layout.Stride()
-	g.flatCoords = flatCoords
+	g.Lay = Lay
+	g.Strd = Lay.Stride()
+	g.FlatCoord = FlatCoord
 	return g
 }
 
@@ -33,38 +33,38 @@ func (g *LineString) Clone() *LineString {
 
 // Interpolate returns the index and delta of val in dimension dim.
 func (g *LineString) Interpolate(val float64, dim int) (int, float64) {
-	n := len(g.flatCoords)
+	n := len(g.FlatCoord)
 	if n == 0 {
 		panic("geom: empty linestring")
 	}
-	if val <= g.flatCoords[dim] {
+	if val <= g.FlatCoord[dim] {
 		return 0, 0
 	}
-	if g.flatCoords[n-g.stride+dim] <= val {
-		return (n - 1) / g.stride, 0
+	if g.FlatCoord[n-g.Strd+dim] <= val {
+		return (n - 1) / g.Strd, 0
 	}
 	low := 0
-	high := n / g.stride
+	high := n / g.Strd
 	for low < high {
 		mid := (low + high) / 2
-		if val < g.flatCoords[mid*g.stride+dim] {
+		if val < g.FlatCoord[mid*g.Strd+dim] {
 			high = mid
 		} else {
 			low = mid + 1
 		}
 	}
 	low--
-	val0 := g.flatCoords[low*g.stride+dim]
+	val0 := g.FlatCoord[low*g.Strd+dim]
 	if val == val0 {
 		return low, 0
 	}
-	val1 := g.flatCoords[(low+1)*g.stride+dim]
+	val1 := g.FlatCoord[(low+1)*g.Strd+dim]
 	return low, (val - val0) / (val1 - val0)
 }
 
 // Length returns the length of g.
 func (g *LineString) Length() float64 {
-	return length1(g.flatCoords, 0, len(g.flatCoords), g.stride)
+	return length1(g.FlatCoord, 0, len(g.FlatCoord), g.Strd)
 }
 
 // MustSetCoords is like SetCoords but it panics on any error.
@@ -82,15 +82,15 @@ func (g *LineString) SetCoords(coords []Coord) (*LineString, error) {
 }
 
 // SetSRID sets the SRID of g.
-func (g *LineString) SetSRID(srid int) *LineString {
-	g.srid = srid
+func (g *LineString) SetSRID(Srid int) *LineString {
+	g.Srid = Srid
 	return g
 }
 
 // SubLineString returns a LineString from starts at index start and stops at
 // index stop of g. The returned LineString aliases g.
 func (g *LineString) SubLineString(start, stop int) *LineString {
-	return NewLineStringFlat(g.layout, g.flatCoords[start*g.stride:stop*g.stride])
+	return NewLineStringFlat(g.Lay, g.FlatCoord[start*g.Strd:stop*g.Strd])
 }
 
 // Swap swaps the values of g and g2.

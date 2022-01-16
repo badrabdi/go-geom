@@ -20,9 +20,9 @@ func ExampleNewPolygon() {
 }
 
 type expectedPolygon struct {
-	layout     Layout
-	stride     int
-	flatCoords []float64
+	Lay     Layout
+	Strd     int
+	FlatCoord []float64
 	ends       []int
 	coords     [][]Coord
 	bounds     *Bounds
@@ -31,9 +31,9 @@ type expectedPolygon struct {
 func (g *Polygon) assertEquals(t *testing.T, e *expectedPolygon) {
 	t.Helper()
 	assert.NoError(t, g.verify())
-	assert.Equal(t, e.layout, g.Layout())
-	assert.Equal(t, e.stride, g.Stride())
-	assert.Equal(t, e.flatCoords, g.FlatCoords())
+	assert.Equal(t, e.Lay, g.Layout())
+	assert.Equal(t, e.Strd, g.Stride())
+	assert.Equal(t, e.FlatCoord, g.FlatCoords())
 	assert.Equal(t, e.ends, g.Ends())
 	assert.Nil(t, g.Endss())
 	assert.Equal(t, e.coords, g.Coords())
@@ -52,10 +52,10 @@ func TestPolygon(t *testing.T) {
 		{
 			p: NewPolygon(XY).MustSetCoords([][]Coord{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}}),
 			expected: &expectedPolygon{
-				layout:     XY,
-				stride:     2,
+				Lay:     XY,
+				Strd:     2,
 				coords:     [][]Coord{{{1, 2}, {3, 4}, {5, 6}}, {{7, 8}, {9, 10}, {11, 12}}},
-				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+				FlatCoord: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 				ends:       []int{6, 12},
 				bounds:     NewBounds(XY).Set(1, 2, 11, 12),
 			},

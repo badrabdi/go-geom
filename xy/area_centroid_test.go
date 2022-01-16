@@ -86,8 +86,8 @@ func TestAreaGetCentroid(t *testing.T) {
 			lastEnd = len(coords)
 		}
 
-		layout := tc.polygons[0].Layout()
-		multiPolygon := geom.NewMultiPolygonFlat(layout, coords, endss)
+		Lay := tc.polygons[0].Layout()
+		multiPolygon := geom.NewMultiPolygonFlat(Lay, coords, endss)
 		centroid = xy.MultiPolygonCentroid(multiPolygon)
 
 		if !reflect.DeepEqual(tc.areaCentroid, centroid) {

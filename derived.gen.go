@@ -94,7 +94,7 @@ func deriveClonePolygon(src *Polygon) *Polygon {
 
 // deriveDeepCopy recursively copies the contents of src into dst.
 func deriveDeepCopy(dst, src *Bounds) {
-	dst.layout = src.layout
+	dst.Lay = src.Lay
 	if src.min == nil {
 		dst.min = nil
 	} else {
@@ -186,9 +186,9 @@ func deriveDeepCopy_5(dst, src *MultiPolygon) {
 // deriveDeepCopy_6 recursively copies the contents of src into dst.
 func deriveDeepCopy_6(dst, src *Point) {
 	func() {
-		field := new(geom0)
-		deriveDeepCopy_11(field, &src.geom0)
-		dst.geom0 = *field
+		field := new(Geom0)
+		deriveDeepCopy_11(field, &src.Geom0)
+		dst.Geom0 = *field
 	}()
 }
 
@@ -204,9 +204,9 @@ func deriveDeepCopy_7(dst, src *Polygon) {
 // deriveDeepCopy_8 recursively copies the contents of src into dst.
 func deriveDeepCopy_8(dst, src *geom1) {
 	func() {
-		field := new(geom0)
-		deriveDeepCopy_11(field, &src.geom0)
-		dst.geom0 = *field
+		field := new(Geom0)
+		deriveDeepCopy_11(field, &src.Geom0)
+		dst.Geom0 = *field
 	}()
 }
 
@@ -265,28 +265,28 @@ func deriveDeepCopy_10(dst, src *geom3) {
 }
 
 // deriveDeepCopy_11 recursively copies the contents of src into dst.
-func deriveDeepCopy_11(dst, src *geom0) {
-	dst.layout = src.layout
-	dst.stride = src.stride
-	if src.flatCoords == nil {
-		dst.flatCoords = nil
+func deriveDeepCopy_11(dst, src *Geom0) {
+	dst.Lay = src.Lay
+	dst.Strd = src.Strd
+	if src.FlatCoord == nil {
+		dst.FlatCoord = nil
 	} else {
-		if dst.flatCoords != nil {
-			if len(src.flatCoords) > len(dst.flatCoords) {
-				if cap(dst.flatCoords) >= len(src.flatCoords) {
-					dst.flatCoords = (dst.flatCoords)[:len(src.flatCoords)]
+		if dst.FlatCoord != nil {
+			if len(src.FlatCoord) > len(dst.FlatCoord) {
+				if cap(dst.FlatCoord) >= len(src.FlatCoord) {
+					dst.FlatCoord = (dst.FlatCoord)[:len(src.FlatCoord)]
 				} else {
-					dst.flatCoords = make([]float64, len(src.flatCoords))
+					dst.FlatCoord = make([]float64, len(src.FlatCoord))
 				}
-			} else if len(src.flatCoords) < len(dst.flatCoords) {
-				dst.flatCoords = (dst.flatCoords)[:len(src.flatCoords)]
+			} else if len(src.FlatCoord) < len(dst.FlatCoord) {
+				dst.FlatCoord = (dst.FlatCoord)[:len(src.FlatCoord)]
 			}
 		} else {
-			dst.flatCoords = make([]float64, len(src.flatCoords))
+			dst.FlatCoord = make([]float64, len(src.FlatCoord))
 		}
-		copy(dst.flatCoords, src.flatCoords)
+		copy(dst.FlatCoord, src.FlatCoord)
 	}
-	dst.srid = src.srid
+	dst.Srid = src.Srid
 }
 
 // deriveDeepCopy_12 recursively copies the contents of src into dst.

@@ -3,9 +3,9 @@ package geom
 // A GeometryCollection is a collection of arbitrary geometries with the same
 // SRID.
 type GeometryCollection struct {
-	layout Layout
+	Lay Layout
 	geoms  []T
-	srid   int
+	Srid   int
 }
 
 // NewGeometryCollection returns a new empty GeometryCollection.
@@ -23,11 +23,11 @@ func (g *GeometryCollection) Geoms() []T {
 	return g.geoms
 }
 
-// Layout returns the smallest layout that covers all of the layouts in g's
+// Layout returns the smallest Lay that covers all of the layouts in g's
 // geometries.
 func (g *GeometryCollection) Layout() Layout {
-	if g.layout != NoLayout {
-		return g.layout
+	if g.Lay != NoLayout {
+		return g.Lay
 	}
 	maxLayout := NoLayout
 	for _, g := range g.geoms {
@@ -58,7 +58,7 @@ func (g *GeometryCollection) NumGeoms() int {
 	return len(g.geoms)
 }
 
-// Stride returns the stride of g's layout.
+// Stride returns the Strd of g's Lay.
 func (g *GeometryCollection) Stride() int {
 	return g.Layout().Stride()
 }
@@ -102,7 +102,7 @@ func (g *GeometryCollection) Endss() [][]int {
 
 // SRID returns g's SRID.
 func (g *GeometryCollection) SRID() int {
-	return g.srid
+	return g.Srid
 }
 
 // MustPush pushes gs to g. It panics on any error.
@@ -114,13 +114,13 @@ func (g *GeometryCollection) MustPush(gs ...T) *GeometryCollection {
 }
 
 // CheckLayout checks all geometries in the collection match the given
-// layout.
-func (g *GeometryCollection) CheckLayout(layout Layout) error {
-	if layout != NoLayout {
+// Lay.
+func (g *GeometryCollection) CheckLayout(Lay Layout) error {
+	if Lay != NoLayout {
 		for _, geom := range g.geoms {
-			if geomLayout := geom.Layout(); geomLayout != layout {
+			if geomLayout := geom.Layout(); geomLayout != Lay {
 				return ErrLayoutMismatch{
-					Got:  layout,
+					Got:  Lay,
 					Want: geomLayout,
 				}
 			}
@@ -129,9 +129,9 @@ func (g *GeometryCollection) CheckLayout(layout Layout) error {
 	return nil
 }
 
-// MustSetLayout sets g's layout. It panics on any error.
-func (g *GeometryCollection) MustSetLayout(layout Layout) *GeometryCollection {
-	if err := g.SetLayout(layout); err != nil {
+// MustSetLayout sets g's Lay. It panics on any error.
+func (g *GeometryCollection) MustSetLayout(Lay Layout) *GeometryCollection {
+	if err := g.SetLayout(Lay); err != nil {
 		panic(err)
 	}
 	return g
@@ -139,12 +139,12 @@ func (g *GeometryCollection) MustSetLayout(layout Layout) *GeometryCollection {
 
 // Push appends geometries.
 func (g *GeometryCollection) Push(gs ...T) error {
-	if g.layout != NoLayout {
+	if g.Lay != NoLayout {
 		for _, geom := range gs {
-			if geomLayout := geom.Layout(); geomLayout != g.layout {
+			if geomLayout := geom.Layout(); geomLayout != g.Lay {
 				return ErrLayoutMismatch{
 					Got:  geomLayout,
-					Want: g.layout,
+					Want: g.Lay,
 				}
 			}
 		}
@@ -153,17 +153,17 @@ func (g *GeometryCollection) Push(gs ...T) error {
 	return nil
 }
 
-// SetLayout sets g's layout.
-func (g *GeometryCollection) SetLayout(layout Layout) error {
-	if err := g.CheckLayout(layout); err != nil {
+// SetLayout sets g's Lay.
+func (g *GeometryCollection) SetLayout(Lay Layout) error {
+	if err := g.CheckLayout(Lay); err != nil {
 		return err
 	}
-	g.layout = layout
+	g.Lay = Lay
 	return nil
 }
 
 // SetSRID sets g's SRID and the SRID of all its elements.
-func (g *GeometryCollection) SetSRID(srid int) *GeometryCollection {
-	g.srid = srid
+func (g *GeometryCollection) SetSRID(Srid int) *GeometryCollection {
+	g.Srid = Srid
 	return g
 }

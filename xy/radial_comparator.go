@@ -15,7 +15,7 @@ import (
 // First the angle is checked.
 // Counter clockwise indicates a greater value and clockwise indicates a lesser value
 // If co-linear then the coordinate nearer to the focalPoint is considered less.
-func NewRadialSorting(layout geom.Layout, coordData []float64, focalPoint geom.Coord) sort.Interface {
+func NewRadialSorting(Lay geom.Layout, coordData []float64, focalPoint geom.Coord) sort.Interface {
 	isLess := func(v1, v2 []float64) bool {
 		orient := bigxy.OrientationIndex(focalPoint, v1, v2)
 
@@ -36,5 +36,5 @@ func NewRadialSorting(layout geom.Layout, coordData []float64, focalPoint geom.C
 		oq := dxq*dxq + dyq*dyq
 		return op < oq
 	}
-	return sorting.NewFlatCoordSorting(layout, coordData, isLess)
+	return sorting.NewFlatCoordSorting(Lay, coordData, isLess)
 }

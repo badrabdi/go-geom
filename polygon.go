@@ -8,23 +8,23 @@ type Polygon struct {
 }
 
 // NewPolygon returns a new, empty, Polygon.
-func NewPolygon(layout Layout) *Polygon {
-	return NewPolygonFlat(layout, nil, nil)
+func NewPolygon(Lay Layout) *Polygon {
+	return NewPolygonFlat(Lay, nil, nil)
 }
 
 // NewPolygonFlat returns a new Polygon with the given flat coordinates.
-func NewPolygonFlat(layout Layout, flatCoords []float64, ends []int) *Polygon {
+func NewPolygonFlat(Lay Layout, FlatCoord []float64, ends []int) *Polygon {
 	g := new(Polygon)
-	g.layout = layout
-	g.stride = layout.Stride()
-	g.flatCoords = flatCoords
+	g.Lay = Lay
+	g.Strd = Lay.Stride()
+	g.FlatCoord = FlatCoord
 	g.ends = ends
 	return g
 }
 
 // Area returns the area.
 func (g *Polygon) Area() float64 {
-	return doubleArea2(g.flatCoords, 0, g.ends, g.stride) / 2
+	return doubleArea2(g.FlatCoord, 0, g.ends, g.Strd) / 2
 }
 
 // Clone returns a deep copy.
@@ -34,7 +34,7 @@ func (g *Polygon) Clone() *Polygon {
 
 // Length returns the perimter.
 func (g *Polygon) Length() float64 {
-	return length2(g.flatCoords, 0, g.ends, g.stride)
+	return length2(g.FlatCoord, 0, g.ends, g.Strd)
 }
 
 // LinearRing returns the ith LinearRing.
@@ -43,7 +43,7 @@ func (g *Polygon) LinearRing(i int) *LinearRing {
 	if i > 0 {
 		offset = g.ends[i-1]
 	}
-	return NewLinearRingFlat(g.layout, g.flatCoords[offset:g.ends[i]])
+	return NewLinearRingFlat(g.Lay, g.FlatCoord[offset:g.ends[i]])
 }
 
 // MustSetCoords sets the coordinates and panics on any error.
@@ -59,11 +59,11 @@ func (g *Polygon) NumLinearRings() int {
 
 // Push appends a LinearRing.
 func (g *Polygon) Push(lr *LinearRing) error {
-	if lr.layout != g.layout {
-		return ErrLayoutMismatch{Got: lr.layout, Want: g.layout}
+	if lr.Lay != g.Lay {
+		return ErrLayoutMismatch{Got: lr.Lay, Want: g.Lay}
 	}
-	g.flatCoords = append(g.flatCoords, lr.flatCoords...)
-	g.ends = append(g.ends, len(g.flatCoords))
+	g.FlatCoord = append(g.FlatCoord, lr.FlatCoord...)
+	g.ends = append(g.ends, len(g.FlatCoord))
 	return nil
 }
 
@@ -76,8 +76,8 @@ func (g *Polygon) SetCoords(coords [][]Coord) (*Polygon, error) {
 }
 
 // SetSRID sets the SRID of g.
-func (g *Polygon) SetSRID(srid int) *Polygon {
-	g.srid = srid
+func (g *Polygon) SetSRID(Srid int) *Polygon {
+	g.Srid = Srid
 	return g
 }
 

@@ -1,5 +1,5 @@
 // Package xyz contains operations in 3d coordinate space.  Each
-// layout must have 3 ordinates (and thus each coordinate)
+// Lay must have 3 ordinates (and thus each coordinate)
 // it is assumed that x,y,z are ordinates with indexes 0,1,2 respectively
 package xyz
 

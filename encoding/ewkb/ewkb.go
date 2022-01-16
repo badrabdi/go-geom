@@ -50,23 +50,23 @@ func Read(r io.Reader) (geom.T, error) {
 	}
 	t := wkbcommon.Type(ewkbGeometryType)
 
-	var layout geom.Layout
+	var Lay geom.Layout
 	switch t & (ewkbZ | ewkbM) {
 	case 0:
-		layout = geom.XY
+		Lay = geom.XY
 	case ewkbZ:
-		layout = geom.XYZ
+		Lay = geom.XYZ
 	case ewkbM:
-		layout = geom.XYM
+		Lay = geom.XYM
 	case ewkbZ | ewkbM:
-		layout = geom.XYZM
+		Lay = geom.XYZM
 	default:
 		return nil, wkbcommon.ErrUnknownType(t)
 	}
 
-	var srid uint32
+	var Srid uint32
 	if ewkbGeometryType&ewkbSRID != 0 {
-		srid, err = wkbcommon.ReadUInt32(r, byteOrder)
+		Srid, err = wkbcommon.ReadUInt32(r, byteOrder)
 		if err != nil {
 			return nil, err
 		}
@@ -74,23 +74,23 @@ func Read(r io.Reader) (geom.T, error) {
 
 	switch t &^ (ewkbZ | ewkbM | ewkbSRID) {
 	case wkbcommon.PointID:
-		flatCoords, err := wkbcommon.ReadFlatCoords0(r, byteOrder, layout.Stride())
+		FlatCoord, err := wkbcommon.ReadFlatCoords0(r, byteOrder, Lay.Stride())
 		if err != nil {
 			return nil, err
 		}
-		return geom.NewPointFlatMaybeEmpty(layout, flatCoords).SetSRID(int(srid)), nil
+		return geom.NewPointFlatMaybeEmpty(Lay, FlatCoord).SetSRID(int(Srid)), nil
 	case wkbcommon.LineStringID:
-		flatCoords, err := wkbcommon.ReadFlatCoords1(r, byteOrder, layout.Stride())
+		FlatCoord, err := wkbcommon.ReadFlatCoords1(r, byteOrder, Lay.Stride())
 		if err != nil {
 			return nil, err
 		}
-		return geom.NewLineStringFlat(layout, flatCoords).SetSRID(int(srid)), nil
+		return geom.NewLineStringFlat(Lay, FlatCoord).SetSRID(int(Srid)), nil
 	case wkbcommon.PolygonID:
-		flatCoords, ends, err := wkbcommon.ReadFlatCoords2(r, byteOrder, layout.Stride())
+		FlatCoord, ends, err := wkbcommon.ReadFlatCoords2(r, byteOrder, Lay.Stride())
 		if err != nil {
 			return nil, err
 		}
-		return geom.NewPolygonFlat(layout, flatCoords, ends).SetSRID(int(srid)), nil
+		return geom.NewPolygonFlat(Lay, FlatCoord, ends).SetSRID(int(Srid)), nil
 	case wkbcommon.MultiPointID:
 		n, err := wkbcommon.ReadUInt32(r, byteOrder)
 		if err != nil {
@@ -99,7 +99,7 @@ func Read(r io.Reader) (geom.T, error) {
 		if limit := wkbcommon.MaxGeometryElements[1]; limit >= 0 && int(n) > limit {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 1, N: int(n), Limit: limit}
 		}
-		mp := geom.NewMultiPoint(layout).SetSRID(int(srid))
+		mp := geom.NewMultiPoint(Lay).SetSRID(int(Srid))
 		for i := uint32(0); i < n; i++ {
 			g, err := Read(r)
 			if err != nil {
@@ -122,7 +122,7 @@ func Read(r io.Reader) (geom.T, error) {
 		if limit := wkbcommon.MaxGeometryElements[2]; limit >= 0 && int(n) > limit {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 2, N: int(n), Limit: limit}
 		}
-		mls := geom.NewMultiLineString(layout).SetSRID(int(srid))
+		mls := geom.NewMultiLineString(Lay).SetSRID(int(Srid))
 		for i := uint32(0); i < n; i++ {
 			g, err := Read(r)
 			if err != nil {
@@ -145,7 +145,7 @@ func Read(r io.Reader) (geom.T, error) {
 		if limit := wkbcommon.MaxGeometryElements[3]; limit >= 0 && int(n) > limit {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 3, N: int(n), Limit: limit}
 		}
-		mp := geom.NewMultiPolygon(layout).SetSRID(int(srid))
+		mp := geom.NewMultiPolygon(Lay).SetSRID(int(Srid))
 		for i := uint32(0); i < n; i++ {
 			g, err := Read(r)
 			if err != nil {
@@ -168,7 +168,7 @@ func Read(r io.Reader) (geom.T, error) {
 		if limit := wkbcommon.MaxGeometryElements[1]; limit >= 0 && int(n) > limit {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 1, N: int(n), Limit: limit}
 		}
-		gc := geom.NewGeometryCollection().SetSRID(int(srid))
+		gc := geom.NewGeometryCollection().SetSRID(int(Srid))
 		for i := uint32(0); i < n; i++ {
 			g, err := Read(r)
 			if err != nil {
@@ -178,10 +178,10 @@ func Read(r io.Reader) (geom.T, error) {
 				return nil, err
 			}
 		}
-		// If EMPTY, mark the collection with a fixed layout to differentiate
+		// If EMPTY, mark the collection with a fixed Lay to differentiate
 		// GEOMETRYCOLLECTION EMPTY between 2D/Z/M/ZM.
 		if gc.Empty() && gc.NumGeoms() == 0 {
-			if err := gc.SetLayout(layout); err != nil {
+			if err := gc.SetLayout(Lay); err != nil {
 				return nil, err
 			}
 		}
@@ -246,15 +246,15 @@ func Write(w io.Writer, byteOrder binary.ByteOrder, g geom.T) error {
 	default:
 		return geom.ErrUnsupportedLayout(g.Layout())
 	}
-	srid := g.SRID()
-	if srid != 0 {
+	Srid := g.SRID()
+	if Srid != 0 {
 		ewkbGeometryType |= ewkbSRID
 	}
 	if err := binary.Write(w, byteOrder, ewkbGeometryType); err != nil {
 		return err
 	}
 	if ewkbGeometryType&ewkbSRID != 0 {
-		if err := binary.Write(w, byteOrder, uint32(srid)); err != nil {
+		if err := binary.Write(w, byteOrder, uint32(Srid)); err != nil {
 			return err
 		}
 	}

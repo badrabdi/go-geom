@@ -13,7 +13,7 @@ func TestUniqueCoords(t *testing.T) {
 	for i, tc := range []struct {
 		pts, expected []float64
 		compare       Compare
-		layout        geom.Layout
+		Lay        geom.Layout
 	}{
 		{
 			pts: []float64{
@@ -22,12 +22,12 @@ func TestUniqueCoords(t *testing.T) {
 			expected: []float64{
 				0, 0, 1, 0, 2, 2, 2, 0,
 			},
-			layout:  geom.XY,
+			Lay:  geom.XY,
 			compare: testCompare{},
 		},
 	} {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			filteredCoords := UniqueCoords(tc.layout, tc.compare, tc.pts)
+			filteredCoords := UniqueCoords(tc.Lay, tc.compare, tc.pts)
 			require.Equal(t, tc.expected, filteredCoords)
 		})
 	}

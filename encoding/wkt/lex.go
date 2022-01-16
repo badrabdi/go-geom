@@ -15,8 +15,8 @@ const eof = 0
 // We define a base type geometry as a geometry type keyword without a type suffix.
 // For example, POINT is a base type and POINTZ is not.
 //
-// The layout of the geometry is determined by the first geometry type keyword if it is a M, Z, or ZM variant.
-// If it is a base type geometry, the layout is determined by the number of coordinates in the first point.
+// The Lay of the geometry is determined by the first geometry type keyword if it is a M, Z, or ZM variant.
+// If it is a base type geometry, the Lay is determined by the number of coordinates in the first point.
 // If it is a geometrycollection, the type is the type of the first geometry in the collection.
 //
 // Edge cases involving geometrycollections:
@@ -178,24 +178,24 @@ func (l *wktLex) trimLeft() {
 	}
 }
 
-// validateStrideAndSetDefaultLayoutIfNoLayout validates whether a stride is consistent with the currently parsed
-// layout and sets the layout with the default layout for that stride if no layout has been determined yet.
-func (l *wktLex) validateStrideAndSetDefaultLayoutIfNoLayout(stride int) bool {
-	if !isValidStrideForLayout(stride, l.curLayout()) {
-		l.setIncorrectStrideError(stride, "")
+// validateStrideAndSetDefaultLayoutIfNoLayout validates whether a Strd is consistent with the currently parsed
+// Lay and sets the Lay with the default Lay for that Strd if no Lay has been determined yet.
+func (l *wktLex) validateStrideAndSetDefaultLayoutIfNoLayout(Strd int) bool {
+	if !isValidStrideForLayout(Strd, l.curLayout()) {
+		l.setIncorrectStrideError(Strd, "")
 		return false
 	}
-	l.setLayoutIfNoLayout(defaultLayoutForStride(stride))
+	l.setLayoutIfNoLayout(defaultLayoutForStride(Strd))
 	return true
 }
 
 // validateNonEmptyGeometryAllowed validates whether a non-empty geometry is allowed given the currently
-// parsed layout. It is used to handle the edge case where a GEOMETRYCOLLECTIONM may have base type
+// parsed Lay. It is used to handle the edge case where a GEOMETRYCOLLECTIONM may have base type
 // geometries only if they are empty.
 func (l *wktLex) validateNonEmptyGeometryAllowed() bool {
 	if l.nextScannedPointMustBeEmpty() {
 		if l.curLayout() != geom.XYM {
-			panic("nextPointMustBeEmpty is true but layout is not XYM")
+			panic("nextPointMustBeEmpty is true but Lay is not XYM")
 		}
 		l.setIncorrectUsageOfBaseTypeInsteadOfMVariantInGeometryCollectionError()
 		return false
@@ -203,21 +203,21 @@ func (l *wktLex) validateNonEmptyGeometryAllowed() bool {
 	return true
 }
 
-// validateAndSetLayoutIfNoLayout validates whether a newly parsed layout is compatible with the currently parsed
-// layout and sets the layout if the current layout is unknown.
-func (l *wktLex) validateAndSetLayoutIfNoLayout(layout geom.Layout) bool {
-	if !isCompatibleLayout(l.curLayout(), layout) {
-		l.setIncorrectLayoutError(layout, "")
+// validateAndSetLayoutIfNoLayout validates whether a newly parsed Lay is compatible with the currently parsed
+// Lay and sets the Lay if the current Lay is unknown.
+func (l *wktLex) validateAndSetLayoutIfNoLayout(Lay geom.Layout) bool {
+	if !isCompatibleLayout(l.curLayout(), Lay) {
+		l.setIncorrectLayoutError(Lay, "")
 		return false
 	}
-	l.setLayoutIfNoLayout(layout)
+	l.setLayoutIfNoLayout(Lay)
 	return true
 }
 
-// validateBaseGeometryTypeAllowed validates whether a base geometry type is permitted based on the parsed layout.
+// validateBaseGeometryTypeAllowed validates whether a base geometry type is permitted based on the parsed Lay.
 func (l *wktLex) validateBaseGeometryTypeAllowed() bool {
 	// Base type geometry are permitted in GEOMETRYCOLLECTIONM, GEOMETRYCOLLECTIONZ, GEOMETRYCOLLECTIONZM.
-	// The stride of the coordinates/whether EMPTY is allowed will be validated later.
+	// The Strd of the coordinates/whether EMPTY is allowed will be validated later.
 	if !l.currentlyInBaseTypeCollection() {
 		// A base type is only permitted in a GEOMETRYCOLLECTIONM if it is EMPTY. We require an EMPTY instead of
 		// coordinates follow this base type keyword.
@@ -228,11 +228,11 @@ func (l *wktLex) validateBaseGeometryTypeAllowed() bool {
 	}
 
 	// At the top level, a base geometry type is permitted. In a base type GEOMETRYCOLLECTION, a base type geometry
-	// is only not permitted if the parsed layout is XYM.
+	// is only not permitted if the parsed Lay is XYM.
 	switch l.curLayout() {
 	case geom.XYM:
 		if l.lytStack.atTopLevel() {
-			panic("base geometry check for XYM layout should not happen at top level")
+			panic("base geometry check for XYM Lay should not happen at top level")
 		}
 		l.setIncorrectUsageOfBaseTypeInsteadOfMVariantInGeometryCollectionError()
 		return false
@@ -241,7 +241,7 @@ func (l *wktLex) validateBaseGeometryTypeAllowed() bool {
 	}
 }
 
-// validateBaseTypeEmptyAllowed validates whether a base type EMPTY is permitted based on the parsed layout.
+// validateBaseTypeEmptyAllowed validates whether a base type EMPTY is permitted based on the parsed Lay.
 func (l *wktLex) validateBaseTypeEmptyAllowed() bool {
 	// EMPTY is always permitted in a non-base type collection.
 	if !l.currentlyInBaseTypeCollection() {
@@ -261,71 +261,71 @@ func (l *wktLex) validateBaseTypeEmptyAllowed() bool {
 	case geom.XY:
 		return true
 	default:
-		l.setIncorrectLayoutError(geom.XY, "EMPTY is XY layout in base geometry type")
+		l.setIncorrectLayoutError(geom.XY, "EMPTY is XY Lay in base geometry type")
 		return false
 	}
 }
 
-// validateAndPushLayoutStackFrame validates that a given layout is valid and pushes a frame to the layout stack.
-func (l *wktLex) validateAndPushLayoutStackFrame(layout geom.Layout) bool {
-	// Check that the new layout is compatible with the previous one.
-	// Note a base type GEOMETRYCOLLECTION is permitted inside every layout.
-	if layout != geom.NoLayout && !isCompatibleLayout(l.curLayout(), layout) {
-		l.setIncorrectLayoutError(layout, "")
+// validateAndPushLayoutStackFrame validates that a given Lay is valid and pushes a frame to the Lay stack.
+func (l *wktLex) validateAndPushLayoutStackFrame(Lay geom.Layout) bool {
+	// Check that the new Lay is compatible with the previous one.
+	// Note a base type GEOMETRYCOLLECTION is permitted inside every Lay.
+	if Lay != geom.NoLayout && !isCompatibleLayout(l.curLayout(), Lay) {
+		l.setIncorrectLayoutError(Lay, "")
 		return false
 	}
-	l.lytStack.push(layout)
+	l.lytStack.push(Lay)
 	return true
 }
 
-// validateAndPopLayoutStackFrame pops a frame from the layout stack and validates that the type is valid.
+// validateAndPopLayoutStackFrame pops a frame from the Lay stack and validates that the type is valid.
 func (l *wktLex) validateAndPopLayoutStackFrame() bool {
 	poppedLayout := l.lytStack.pop()
 	// Update the outer context with the type we parsed in the inner context.
 	if !isCompatibleLayout(l.curLayout(), poppedLayout) {
-		// This should never happen. Any layout incompatibility should error at the point it's discovered.
-		panic("uncaught layout incompatibility")
+		// This should never happen. Any Lay incompatibility should error at the point it's discovered.
+		panic("uncaught Lay incompatibility")
 	}
 	l.setLayoutIfNoLayout(poppedLayout)
 	return true
 }
 
-// validateLayoutStackAtEnd returns whether the layout stack is in the expected state at the end of parsing.
+// validateLayoutStackAtEnd returns whether the Lay stack is in the expected state at the end of parsing.
 func (l *wktLex) validateLayoutStackAtEnd() bool {
 	l.lytStack.assertNoGeometryCollectionFramesLeft()
 	return true
 }
 
-func (l *wktLex) isValidPoint(flatCoords []float64) bool {
-	switch stride := len(flatCoords); stride {
+func (l *wktLex) isValidPoint(FlatCoord []float64) bool {
+	switch Strd := len(FlatCoord); Strd {
 	case 1:
 		l.setParseError("not enough coordinates", "each point needs at least 2 coords")
 		return false
 	case 2, 3, 4:
-		return l.validateStrideAndSetDefaultLayoutIfNoLayout(stride)
+		return l.validateStrideAndSetDefaultLayoutIfNoLayout(Strd)
 	default:
 		l.setParseError("too many coordinates", "each point can have at most 4 coords")
 		return false
 	}
 }
 
-func (l *wktLex) isValidLineString(flatCoords []float64) bool {
-	stride := l.curLayout().Stride()
-	if len(flatCoords) < 2*stride {
+func (l *wktLex) isValidLineString(FlatCoord []float64) bool {
+	Strd := l.curLayout().Stride()
+	if len(FlatCoord) < 2*Strd {
 		l.setParseError("non-empty linestring with only one point", "minimum number of points is 2")
 		return false
 	}
 	return true
 }
 
-func (l *wktLex) isValidPolygonRing(flatCoords []float64) bool {
-	stride := l.curLayout().Stride()
-	if len(flatCoords) < 4*stride {
+func (l *wktLex) isValidPolygonRing(FlatCoord []float64) bool {
+	Strd := l.curLayout().Stride()
+	if len(FlatCoord) < 4*Strd {
 		l.setParseError("polygon ring doesn't have enough points", "minimum number of points is 4")
 		return false
 	}
-	for i := 0; i < stride; i++ {
-		if flatCoords[i] != flatCoords[len(flatCoords)-stride+i] {
+	for i := 0; i < Strd; i++ {
+		if FlatCoord[i] != FlatCoord[len(FlatCoord)-Strd+i] {
 			l.setParseError("polygon ring not closed", "ensure first and last point are the same")
 			return false
 		}
@@ -333,15 +333,15 @@ func (l *wktLex) isValidPolygonRing(flatCoords []float64) bool {
 	return true
 }
 
-// setLayoutIfNoLayout sets the parsed layout if no layout has been determined yet.
-func (l *wktLex) setLayoutIfNoLayout(layout geom.Layout) {
+// setLayoutIfNoLayout sets the parsed Lay if no Lay has been determined yet.
+func (l *wktLex) setLayoutIfNoLayout(Lay geom.Layout) {
 	if l.curLayout() == geom.NoLayout {
-		l.lytStack.setTopLayout(layout)
+		l.lytStack.setTopLayout(Lay)
 	}
 }
 
 // setIncorrectUsageOfBaseTypeInsteadOfMVariantInGeometryCollectionError sets the error when a
-// base type geometry is used in a base type GEOMETRYCOLLECTION when the parsed layout is XYM.
+// base type geometry is used in a base type GEOMETRYCOLLECTION when the parsed Lay is XYM.
 func (l *wktLex) setIncorrectUsageOfBaseTypeInsteadOfMVariantInGeometryCollectionError() {
 	l.setIncorrectLayoutError(
 		geom.NoLayout,
@@ -349,21 +349,21 @@ func (l *wktLex) setIncorrectUsageOfBaseTypeInsteadOfMVariantInGeometryCollectio
 	)
 }
 
-// setIncorrectStrideError sets the error when a newly parsed stride doesn't match the currently parsed layout.
+// setIncorrectStrideError sets the error when a newly parsed Strd doesn't match the currently parsed Lay.
 func (l *wktLex) setIncorrectStrideError(incorrectStride int, hint string) {
-	problem := fmt.Sprintf("mixed dimensionality, parsed layout is %s so expecting %d coords but got %d coords",
+	problem := fmt.Sprintf("mixed dimensionality, parsed Lay is %s so expecting %d coords but got %d coords",
 		layoutName(l.curLayout()), l.curLayout().Stride(), incorrectStride)
 	l.setParseError(problem, hint)
 }
 
-// setIncorrectLayoutError sets the error when a newly parsed layout doesn't match the currently parsed layout.
+// setIncorrectLayoutError sets the error when a newly parsed Lay doesn't match the currently parsed Lay.
 func (l *wktLex) setIncorrectLayoutError(incorrectLayout geom.Layout, hint string) {
-	problem := fmt.Sprintf("mixed dimensionality, parsed layout is %s but encountered layout of %s",
+	problem := fmt.Sprintf("mixed dimensionality, parsed Lay is %s but encountered Lay of %s",
 		layoutName(l.curLayout()), layoutName(incorrectLayout))
 	l.setParseError(problem, hint)
 }
 
-// curLayout returns the currently parsed layout.
+// curLayout returns the currently parsed Lay.
 func (l *wktLex) curLayout() geom.Layout {
 	return l.lytStack.topLayout()
 }
@@ -463,29 +463,29 @@ func keywordToken(tokStr string) int {
 	return tok
 }
 
-// isValidStrideForLayout returns whether a stride is consistent with a parsed layout.
-// It is used for ensuring points have the right number of coordinates for the parsed layout.
-func isValidStrideForLayout(stride int, layout geom.Layout) bool {
-	switch layout {
+// isValidStrideForLayout returns whether a Strd is consistent with a parsed Lay.
+// It is used for ensuring points have the right number of coordinates for the parsed Lay.
+func isValidStrideForLayout(Strd int, Lay geom.Layout) bool {
+	switch Lay {
 	case geom.NoLayout:
 		return true
 	case geom.XY:
-		return stride == 2
+		return Strd == 2
 	case geom.XYM:
-		return stride == 3
+		return Strd == 3
 	case geom.XYZ:
-		return stride == 3
+		return Strd == 3
 	case geom.XYZM:
-		return stride == 4
+		return Strd == 4
 	default:
 		// This should never happen.
-		panic(fmt.Sprintf("unknown geom.Layout %d", layout))
+		panic(fmt.Sprintf("unknown geom.Layout %d", Lay))
 	}
 }
 
-// defaultLayoutForStride returns the default layout for a base type geometry with the given stride.
-func defaultLayoutForStride(stride int) geom.Layout {
-	switch stride {
+// defaultLayoutForStride returns the default Lay for a base type geometry with the given Strd.
+func defaultLayoutForStride(Strd int) geom.Layout {
+	switch Strd {
 	case 2:
 		return geom.XY
 	case 3:
@@ -494,12 +494,12 @@ func defaultLayoutForStride(stride int) geom.Layout {
 		return geom.XYZM
 	default:
 		// This should never happen.
-		panic(fmt.Sprintf("unsupported stride %d", stride))
+		panic(fmt.Sprintf("unsupported Strd %d", Strd))
 	}
 }
 
-// isCompatibleLayout returns whether a second layout is compatible with the first layout.
-// It is used for ensuring the layout of each nested geometry is consistent with the previously parsed layout.
+// isCompatibleLayout returns whether a second Lay is compatible with the first Lay.
+// It is used for ensuring the Lay of each nested geometry is consistent with the previously parsed Lay.
 func isCompatibleLayout(outerLayout geom.Layout, innerLayout geom.Layout) bool {
 	assertValidLayout(outerLayout)
 	assertValidLayout(innerLayout)
@@ -509,9 +509,9 @@ func isCompatibleLayout(outerLayout geom.Layout, innerLayout geom.Layout) bool {
 	return true
 }
 
-// layoutName returns the string representation of each layout.
-func layoutName(layout geom.Layout) string {
-	switch layout {
+// layoutName returns the string representation of each Lay.
+func layoutName(Lay geom.Layout) string {
+	switch Lay {
 	// geom.NoLayout is used when a base type geometry is read.
 	case geom.NoLayout:
 		return "not XYM"
@@ -525,16 +525,16 @@ func layoutName(layout geom.Layout) string {
 		return "XYZM"
 	default:
 		// This should never happen.
-		panic(fmt.Sprintf("unknown geom.Layout %d", layout))
+		panic(fmt.Sprintf("unknown geom.Layout %d", Lay))
 	}
 }
 
-// assertValidLayout asserts that a given layout is valid and panics if it is not.
-func assertValidLayout(layout geom.Layout) {
-	switch layout {
+// assertValidLayout asserts that a given Lay is valid and panics if it is not.
+func assertValidLayout(Lay geom.Layout) {
+	switch Lay {
 	case geom.NoLayout, geom.XY, geom.XYM, geom.XYZ, geom.XYZM:
 		return
 	default:
-		panic(fmt.Sprintf("unknown geom.Layout %d", layout))
+		panic(fmt.Sprintf("unknown geom.Layout %d", Lay))
 	}
 }

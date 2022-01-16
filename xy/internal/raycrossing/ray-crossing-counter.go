@@ -7,14 +7,14 @@ import (
 )
 
 // LocatePointInRing determine where the point is with regards to the ring
-func LocatePointInRing(layout geom.Layout, p geom.Coord, ring []float64) location.Type {
+func LocatePointInRing(Lay geom.Layout, p geom.Coord, ring []float64) location.Type {
 	counter := rayCrossingCounter{p: p}
 
-	stride := layout.Stride()
+	Strd := Lay.Stride()
 
-	for i := stride; i < len(ring); i += stride {
+	for i := Strd; i < len(ring); i += Strd {
 		p1 := geom.Coord(ring[i : i+2])
-		p2 := geom.Coord(ring[i-stride : i-stride+2])
+		p2 := geom.Coord(ring[i-Strd : i-Strd+2])
 
 		counter.countSegment(p1, p2)
 		if counter.isPointOnSegment {

@@ -1,12 +1,12 @@
 package wkt
 
 type geomFlatCoordsRepr struct {
-	flatCoords []float64
-	ends       []int
+	FlatCoord []float64
+	ends      []int
 }
 
-func makeGeomFlatCoordsRepr(flatCoords []float64) geomFlatCoordsRepr {
-	return geomFlatCoordsRepr{flatCoords: flatCoords, ends: []int{len(flatCoords)}}
+func makeGeomFlatCoordsRepr(FlatCoord []float64) geomFlatCoordsRepr {
+	return geomFlatCoordsRepr{FlatCoord: FlatCoord, ends: []int{len(FlatCoord)}}
 }
 
 func appendGeomFlatCoordsReprs(p1 geomFlatCoordsRepr, p2 geomFlatCoordsRepr) geomFlatCoordsRepr {
@@ -16,19 +16,19 @@ func appendGeomFlatCoordsReprs(p1 geomFlatCoordsRepr, p2 geomFlatCoordsRepr) geo
 			p2.ends[i] += p1LastEnd
 		}
 	}
-	return geomFlatCoordsRepr{flatCoords: append(p1.flatCoords, p2.flatCoords...), ends: append(p1.ends, p2.ends...)}
+	return geomFlatCoordsRepr{FlatCoord: append(p1.FlatCoord, p2.FlatCoord...), ends: append(p1.ends, p2.ends...)}
 }
 
 type multiPolygonFlatCoordsRepr struct {
-	flatCoords []float64
-	endss      [][]int
+	FlatCoord []float64
+	endss     [][]int
 }
 
 func makeMultiPolygonFlatCoordsRepr(p geomFlatCoordsRepr) multiPolygonFlatCoordsRepr {
-	if p.flatCoords == nil {
-		return multiPolygonFlatCoordsRepr{flatCoords: nil, endss: [][]int{nil}}
+	if p.FlatCoord == nil {
+		return multiPolygonFlatCoordsRepr{FlatCoord: nil, endss: [][]int{nil}}
 	}
-	return multiPolygonFlatCoordsRepr{flatCoords: p.flatCoords, endss: [][]int{p.ends}}
+	return multiPolygonFlatCoordsRepr{FlatCoord: p.FlatCoord, endss: [][]int{p.ends}}
 }
 
 func appendMultiPolygonFlatCoordsRepr(
@@ -49,6 +49,6 @@ func appendMultiPolygonFlatCoordsRepr(
 		}
 	}
 	return multiPolygonFlatCoordsRepr{
-		flatCoords: append(p1.flatCoords, p2.flatCoords...), endss: append(p1.endss, p2.endss...),
+		FlatCoord: append(p1.FlatCoord, p2.FlatCoord...), endss: append(p1.endss, p2.endss...),
 	}
 }

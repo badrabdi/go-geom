@@ -58,42 +58,42 @@ func Read(r io.Reader, opts ...wkbcommon.WKBOption) (geom.T, error) {
 	}
 	t := wkbcommon.Type(wkbGeometryType)
 
-	var layout geom.Layout
+	var Lay geom.Layout
 	switch 1000 * (t / 1000) {
 	case wkbXYID:
-		layout = geom.XY
+		Lay = geom.XY
 	case wkbXYZID:
-		layout = geom.XYZ
+		Lay = geom.XYZ
 	case wkbXYMID:
-		layout = geom.XYM
+		Lay = geom.XYM
 	case wkbXYZMID:
-		layout = geom.XYZM
+		Lay = geom.XYZM
 	default:
 		return nil, wkbcommon.ErrUnknownType(t)
 	}
 
 	switch t % 1000 {
 	case wkbcommon.PointID:
-		flatCoords, err := wkbcommon.ReadFlatCoords0(r, byteOrder, layout.Stride())
+		FlatCoord, err := wkbcommon.ReadFlatCoords0(r, byteOrder, Lay.Stride())
 		if err != nil {
 			return nil, err
 		}
 		if params.EmptyPointHandling == wkbcommon.EmptyPointHandlingNaN {
-			return geom.NewPointFlatMaybeEmpty(layout, flatCoords), nil
+			return geom.NewPointFlatMaybeEmpty(Lay, FlatCoord), nil
 		}
-		return geom.NewPointFlat(layout, flatCoords), nil
+		return geom.NewPointFlat(Lay, FlatCoord), nil
 	case wkbcommon.LineStringID:
-		flatCoords, err := wkbcommon.ReadFlatCoords1(r, byteOrder, layout.Stride())
+		FlatCoord, err := wkbcommon.ReadFlatCoords1(r, byteOrder, Lay.Stride())
 		if err != nil {
 			return nil, err
 		}
-		return geom.NewLineStringFlat(layout, flatCoords), nil
+		return geom.NewLineStringFlat(Lay, FlatCoord), nil
 	case wkbcommon.PolygonID:
-		flatCoords, ends, err := wkbcommon.ReadFlatCoords2(r, byteOrder, layout.Stride())
+		FlatCoord, ends, err := wkbcommon.ReadFlatCoords2(r, byteOrder, Lay.Stride())
 		if err != nil {
 			return nil, err
 		}
-		return geom.NewPolygonFlat(layout, flatCoords, ends), nil
+		return geom.NewPolygonFlat(Lay, FlatCoord, ends), nil
 	case wkbcommon.MultiPointID:
 		n, err := wkbcommon.ReadUInt32(r, byteOrder)
 		if err != nil {
@@ -102,7 +102,7 @@ func Read(r io.Reader, opts ...wkbcommon.WKBOption) (geom.T, error) {
 		if limit := wkbcommon.MaxGeometryElements[1]; limit >= 0 && int(n) > limit {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 1, N: int(n), Limit: limit}
 		}
-		mp := geom.NewMultiPoint(layout)
+		mp := geom.NewMultiPoint(Lay)
 		for i := uint32(0); i < n; i++ {
 			g, err := Read(r, opts...)
 			if err != nil {
@@ -125,7 +125,7 @@ func Read(r io.Reader, opts ...wkbcommon.WKBOption) (geom.T, error) {
 		if limit := wkbcommon.MaxGeometryElements[2]; limit >= 0 && int(n) > limit {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 2, N: int(n), Limit: limit}
 		}
-		mls := geom.NewMultiLineString(layout)
+		mls := geom.NewMultiLineString(Lay)
 		for i := uint32(0); i < n; i++ {
 			g, err := Read(r, opts...)
 			if err != nil {
@@ -148,7 +148,7 @@ func Read(r io.Reader, opts ...wkbcommon.WKBOption) (geom.T, error) {
 		if limit := wkbcommon.MaxGeometryElements[3]; limit >= 0 && int(n) > limit {
 			return nil, wkbcommon.ErrGeometryTooLarge{Level: 3, N: int(n), Limit: limit}
 		}
-		mp := geom.NewMultiPolygon(layout)
+		mp := geom.NewMultiPolygon(Lay)
 		for i := uint32(0); i < n; i++ {
 			g, err := Read(r, opts...)
 			if err != nil {
@@ -178,10 +178,10 @@ func Read(r io.Reader, opts ...wkbcommon.WKBOption) (geom.T, error) {
 				return nil, err
 			}
 		}
-		// If EMPTY, mark the collection with a fixed layout to differentiate
+		// If EMPTY, mark the collection with a fixed Lay to differentiate
 		// GEOMETRYCOLLECTION EMPTY between 2D/Z/M/ZM.
 		if gc.Empty() && gc.NumGeoms() == 0 {
-			if err := gc.SetLayout(layout); err != nil {
+			if err := gc.SetLayout(Lay); err != nil {
 				return nil, err
 			}
 		}

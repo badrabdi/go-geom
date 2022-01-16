@@ -13,7 +13,7 @@ import (
 
 var nullGeometry = []byte("null")
 
-// DefaultLayout is the default layout for empty geometries.
+// DefaultLayout is the default Lay for empty geometries.
 // FIXME This should be Codec-specific, not global.
 var DefaultLayout = geom.XY
 
@@ -128,11 +128,11 @@ func (g *Geometry) Decode() (geom.T, error) {
 		if len(coords) == 0 {
 			return geom.NewPointEmpty(DefaultLayout), nil
 		}
-		layout, err := guessLayout0(coords)
+		Lay, err := guessLayout0(coords)
 		if err != nil {
 			return nil, err
 		}
-		return geom.NewPoint(layout).SetCoords(coords)
+		return geom.NewPoint(Lay).SetCoords(coords)
 	case "LineString":
 		if g.Coordinates == nil {
 			return geom.NewLineString(geom.NoLayout), nil
@@ -141,11 +141,11 @@ func (g *Geometry) Decode() (geom.T, error) {
 		if err := json.Unmarshal(*g.Coordinates, &coords); err != nil {
 			return nil, err
 		}
-		layout, err := guessLayout1(coords)
+		Lay, err := guessLayout1(coords)
 		if err != nil {
 			return nil, err
 		}
-		return geom.NewLineString(layout).SetCoords(coords)
+		return geom.NewLineString(Lay).SetCoords(coords)
 	case "Polygon":
 		if g.Coordinates == nil {
 			return geom.NewPolygon(geom.NoLayout), nil
@@ -154,11 +154,11 @@ func (g *Geometry) Decode() (geom.T, error) {
 		if err := json.Unmarshal(*g.Coordinates, &coords); err != nil {
 			return nil, err
 		}
-		layout, err := guessLayout2(coords)
+		Lay, err := guessLayout2(coords)
 		if err != nil {
 			return nil, err
 		}
-		return geom.NewPolygon(layout).SetCoords(coords)
+		return geom.NewPolygon(Lay).SetCoords(coords)
 	case "MultiPoint":
 		if g.Coordinates == nil {
 			return geom.NewMultiPoint(geom.NoLayout), nil
@@ -167,11 +167,11 @@ func (g *Geometry) Decode() (geom.T, error) {
 		if err := json.Unmarshal(*g.Coordinates, &coords); err != nil {
 			return nil, err
 		}
-		layout, err := guessLayout1(coords)
+		Lay, err := guessLayout1(coords)
 		if err != nil {
 			return nil, err
 		}
-		return geom.NewMultiPoint(layout).SetCoords(coords)
+		return geom.NewMultiPoint(Lay).SetCoords(coords)
 	case "MultiLineString":
 		if g.Coordinates == nil {
 			return geom.NewMultiLineString(geom.NoLayout), nil
@@ -180,11 +180,11 @@ func (g *Geometry) Decode() (geom.T, error) {
 		if err := json.Unmarshal(*g.Coordinates, &coords); err != nil {
 			return nil, err
 		}
-		layout, err := guessLayout2(coords)
+		Lay, err := guessLayout2(coords)
 		if err != nil {
 			return nil, err
 		}
-		return geom.NewMultiLineString(layout).SetCoords(coords)
+		return geom.NewMultiLineString(Lay).SetCoords(coords)
 	case "MultiPolygon":
 		if g.Coordinates == nil {
 			return geom.NewMultiPolygon(geom.NoLayout), nil
@@ -193,11 +193,11 @@ func (g *Geometry) Decode() (geom.T, error) {
 		if err := json.Unmarshal(*g.Coordinates, &coords); err != nil {
 			return nil, err
 		}
-		layout, err := guessLayout3(coords)
+		Lay, err := guessLayout3(coords)
 		if err != nil {
 			return nil, err
 		}
-		return geom.NewMultiPolygon(layout).SetCoords(coords)
+		return geom.NewMultiPolygon(Lay).SetCoords(coords)
 	case "GeometryCollection":
 		var geometries []Geometry
 		if g.Geometries != nil {
@@ -511,17 +511,17 @@ func Unmarshal(data []byte, g *geom.T) error {
 
 // decodeBBox decodes bb into a Bounds.
 func decodeBBox(bb []float64) (*geom.Bounds, error) {
-	var layout geom.Layout
+	var Lay geom.Layout
 	switch l := len(bb); l {
 	case 4:
-		layout = geom.XY
+		Lay = geom.XY
 	case 6:
-		layout = geom.XYZ
+		Lay = geom.XYZ
 	default:
 		return nil, ErrDimensionalityTooLow(l)
 	}
 
-	return geom.NewBounds(layout).Set(bb...), nil
+	return geom.NewBounds(Lay).Set(bb...), nil
 }
 
 // encodeBBox encodes b as a GeoJson Bounding Box.

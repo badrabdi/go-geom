@@ -6,10 +6,10 @@ import (
 	"github.com/twpayne/go-geom"
 )
 
-// layoutStackObj is a stack object used in the layout parsing stack.
+// layoutStackObj is a stack object used in the Lay parsing stack.
 type layoutStackObj struct {
-	// layout is the currently parsed geometry type.
-	layout geom.Layout
+	// Lay is the currently parsed geometry type.
+	Lay geom.Layout
 	// inBaseTypeCollection is a bool where true means we are at the top-level or in a base type GEOMETRYCOLLECTION.
 	inBaseTypeCollection bool
 	// nextPointMustBeEmpty is a bool where true means the next scanned point must be EMPTY. It is used to handle
@@ -27,32 +27,32 @@ type layoutStack struct {
 // makeLayoutStack returns a newly created layoutStack. An initial frame is pushed for the top level context.
 func makeLayoutStack() layoutStack {
 	return layoutStack{
-		data: []layoutStackObj{{layout: geom.NoLayout, inBaseTypeCollection: true}},
+		data: []layoutStackObj{{Lay: geom.NoLayout, inBaseTypeCollection: true}},
 	}
 }
 
-// push constructs a layoutStackObj for a layout and pushes it onto the layout stack.
-func (s *layoutStack) push(layout geom.Layout) {
+// push constructs a layoutStackObj for a Lay and pushes it onto the Lay stack.
+func (s *layoutStack) push(Lay geom.Layout) {
 	// inBaseTypeCollection inherits from outer context.
 	stackObj := layoutStackObj{
-		layout:               layout,
+		Lay:               Lay,
 		inBaseTypeCollection: s.topInBaseTypeCollection(),
 	}
 
-	switch layout {
+	switch Lay {
 	case geom.NoLayout:
-		stackObj.layout = s.topLayout()
+		stackObj.Lay = s.topLayout()
 	case geom.XYM, geom.XYZ, geom.XYZM:
 		stackObj.inBaseTypeCollection = false
 	default:
 		// This should never happen.
-		panic(fmt.Sprintf("unknown geom.Layout %d", layout))
+		panic(fmt.Sprintf("unknown geom.Layout %d", Lay))
 	}
 
 	s.data = append(s.data, stackObj)
 }
 
-// pop pops a layoutStackObj from the layout stack and returns its layout.
+// pop pops a layoutStackObj from the Lay stack and returns its Lay.
 func (s *layoutStack) pop() geom.Layout {
 	s.assertNotEmpty()
 	if s.atTopLevel() {
@@ -69,9 +69,9 @@ func (s *layoutStack) top() *layoutStackObj {
 	return &s.data[len(s.data)-1]
 }
 
-// topLayout returns the layout field of the topmost layoutStackObj.
+// topLayout returns the Lay field of the topmost layoutStackObj.
 func (s *layoutStack) topLayout() geom.Layout {
-	return s.top().layout
+	return s.top().Lay
 }
 
 // topLayout returns the inBaseTypeCollection field of the topmost layoutStackObj.
@@ -84,16 +84,16 @@ func (s *layoutStack) topNextPointMustBeEmpty() bool {
 	return s.top().nextPointMustBeEmpty
 }
 
-// setTopLayout sets the layout field of the topmost layoutStackObj.
-func (s *layoutStack) setTopLayout(layout geom.Layout) {
-	switch layout {
+// setTopLayout sets the Lay field of the topmost layoutStackObj.
+func (s *layoutStack) setTopLayout(Lay geom.Layout) {
+	switch Lay {
 	case geom.XY, geom.XYM, geom.XYZ, geom.XYZM:
-		s.top().layout = layout
+		s.top().Lay = Lay
 	case geom.NoLayout:
 		panic("setTopLayout should not be called with geom.NoLayout")
 	default:
 		// This should never happen.
-		panic(fmt.Sprintf("unknown geom.Layout %d", layout))
+		panic(fmt.Sprintf("unknown geom.Layout %d", Lay))
 	}
 }
 
@@ -109,7 +109,7 @@ func (s *layoutStack) setTopNextPointMustBeEmpty(nextPointMustBeEmpty bool) {
 func (s *layoutStack) assertNotEmpty() {
 	// Layout stack should never be empty.
 	if len(s.data) == 0 {
-		panic("layout stack is empty")
+		panic("Lay stack is empty")
 	}
 }
 
@@ -117,7 +117,7 @@ func (s *layoutStack) assertNotEmpty() {
 func (s *layoutStack) assertNoGeometryCollectionFramesLeft() {
 	// The initial stack frame should be the only one remaining at the end.
 	if !s.atTopLevel() {
-		panic("layout stack still has geometrycollection frames")
+		panic("Lay stack still has geometrycollection frames")
 	}
 }
 

@@ -66,15 +66,15 @@ func TestBoundsIsEmpty(t *testing.T) {
 		expected bool
 	}{
 		{
-			b:        &Bounds{layout: XY, min: Coord{0, 0}, max: Coord{-1, -1}},
+			b:        &Bounds{Lay: XY, min: Coord{0, 0}, max: Coord{-1, -1}},
 			expected: true,
 		},
 		{
-			b:        &Bounds{layout: XY, min: Coord{0, 0}, max: Coord{0, 0}},
+			b:        &Bounds{Lay: XY, min: Coord{0, 0}, max: Coord{0, 0}},
 			expected: false,
 		},
 		{
-			b:        &Bounds{layout: XY, min: Coord{-100, -100}, max: Coord{100, 100}},
+			b:        &Bounds{Lay: XY, min: Coord{-100, -100}, max: Coord{100, 100}},
 			expected: false,
 		},
 	} {
@@ -91,38 +91,38 @@ func TestBoundsOverlaps(t *testing.T) {
 		expected bool
 	}{
 		{
-			b1:       &Bounds{layout: XY, min: Coord{0, 0}, max: Coord{0, 0}},
-			b2:       &Bounds{layout: XY, min: Coord{-10, 0}, max: Coord{-5, 10}},
+			b1:       &Bounds{Lay: XY, min: Coord{0, 0}, max: Coord{0, 0}},
+			b2:       &Bounds{Lay: XY, min: Coord{-10, 0}, max: Coord{-5, 10}},
 			expected: false,
 		},
 		{
-			b1:       &Bounds{layout: XY, min: Coord{-100, -100}, max: Coord{100, 100}},
-			b2:       &Bounds{layout: XY, min: Coord{-10, 0}, max: Coord{-5, 10}},
+			b1:       &Bounds{Lay: XY, min: Coord{-100, -100}, max: Coord{100, 100}},
+			b2:       &Bounds{Lay: XY, min: Coord{-10, 0}, max: Coord{-5, 10}},
 			expected: true,
 		},
 		{
-			b1:       &Bounds{layout: XY, min: Coord{1, 1}, max: Coord{5, 5}},
-			b2:       &Bounds{layout: XY, min: Coord{-5, -5}, max: Coord{-1, -1}},
+			b1:       &Bounds{Lay: XY, min: Coord{1, 1}, max: Coord{5, 5}},
+			b2:       &Bounds{Lay: XY, min: Coord{-5, -5}, max: Coord{-1, -1}},
 			expected: false,
 		},
 		{
-			b1:       &Bounds{layout: XYZ, min: Coord{-100, -100, -100}, max: Coord{100, 100, 100}},
-			b2:       &Bounds{layout: XYZ, min: Coord{-10, 0, 0}, max: Coord{-5, 10, 10}},
+			b1:       &Bounds{Lay: XYZ, min: Coord{-100, -100, -100}, max: Coord{100, 100, 100}},
+			b2:       &Bounds{Lay: XYZ, min: Coord{-10, 0, 0}, max: Coord{-5, 10, 10}},
 			expected: true,
 		},
 		{
-			b1:       &Bounds{layout: XYZ, min: Coord{0, 0, 0}, max: Coord{100, 100, 100}},
-			b2:       &Bounds{layout: XYZ, min: Coord{5, 5, -10}, max: Coord{10, 10, -5}},
+			b1:       &Bounds{Lay: XYZ, min: Coord{0, 0, 0}, max: Coord{100, 100, 100}},
+			b2:       &Bounds{Lay: XYZ, min: Coord{5, 5, -10}, max: Coord{10, 10, -5}},
 			expected: false,
 		},
 		{
-			b1:       &Bounds{layout: XY, min: Coord{0, 0}, max: Coord{0, 0}},
-			b2:       &Bounds{layout: XY, min: Coord{-10, -10}, max: Coord{-0.000000000000000000000000000001, 0}},
+			b1:       &Bounds{Lay: XY, min: Coord{0, 0}, max: Coord{0, 0}},
+			b2:       &Bounds{Lay: XY, min: Coord{-10, -10}, max: Coord{-0.000000000000000000000000000001, 0}},
 			expected: false,
 		},
 	} {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			assert.Equal(t, tc.expected, tc.b1.Overlaps(tc.b1.layout, tc.b2))
+			assert.Equal(t, tc.expected, tc.b1.Overlaps(tc.b1.Lay, tc.b2))
 		})
 	}
 }
@@ -134,33 +134,33 @@ func TestBoundsOverlapsPoint(t *testing.T) {
 		expected bool
 	}{
 		{
-			b:        &Bounds{layout: XY, min: Coord{0, 0}, max: Coord{0, 0}},
+			b:        &Bounds{Lay: XY, min: Coord{0, 0}, max: Coord{0, 0}},
 			p:        Coord{-10, 0},
 			expected: false,
 		},
 		{
-			b:        &Bounds{layout: XY, min: Coord{-100, -100}, max: Coord{100, 100}},
+			b:        &Bounds{Lay: XY, min: Coord{-100, -100}, max: Coord{100, 100}},
 			p:        Coord{-10, 0},
 			expected: true,
 		},
 		{
-			b:        &Bounds{layout: XYZ, min: Coord{-100, -100, -100}, max: Coord{100, 100, 100}},
+			b:        &Bounds{Lay: XYZ, min: Coord{-100, -100, -100}, max: Coord{100, 100, 100}},
 			p:        Coord{-5, 10, 10},
 			expected: true,
 		},
 		{
-			b:        &Bounds{layout: XYZ, min: Coord{0, 0, 0}, max: Coord{100, 100, 100}},
+			b:        &Bounds{Lay: XYZ, min: Coord{0, 0, 0}, max: Coord{100, 100, 100}},
 			p:        Coord{5, 5, -10},
 			expected: false,
 		},
 		{
-			b:        &Bounds{layout: XY, min: Coord{0, 0}, max: Coord{10, 10}},
+			b:        &Bounds{Lay: XY, min: Coord{0, 0}, max: Coord{10, 10}},
 			p:        Coord{-0.000000000000000000000000000001, 0},
 			expected: false,
 		},
 	} {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			assert.Equal(t, tc.expected, tc.b.OverlapsPoint(tc.b.layout, tc.p))
+			assert.Equal(t, tc.expected, tc.b.OverlapsPoint(tc.b.Lay, tc.p))
 		})
 	}
 }
@@ -206,9 +206,9 @@ func TestBoundsPolygon(t *testing.T) {
 }
 
 func TestBoundsSet(t *testing.T) {
-	bounds := Bounds{layout: XY, min: Coord{0, 0}, max: Coord{10, 10}}
+	bounds := Bounds{Lay: XY, min: Coord{0, 0}, max: Coord{10, 10}}
 	bounds.Set(0, 0, 20, 20)
-	expected := Bounds{layout: XY, min: Coord{0, 0}, max: Coord{20, 20}}
+	expected := Bounds{Lay: XY, min: Coord{0, 0}, max: Coord{20, 20}}
 	assert.Equal(t, expected, bounds)
 	assert.Panics(t, func() {
 		bounds.Set(2, 2, 2, 2, 2)
@@ -216,9 +216,9 @@ func TestBoundsSet(t *testing.T) {
 }
 
 func TestBoundsSetCoords(t *testing.T) {
-	bounds := &Bounds{layout: XY, min: Coord{0, 0}, max: Coord{10, 10}}
+	bounds := &Bounds{Lay: XY, min: Coord{0, 0}, max: Coord{10, 10}}
 	bounds.SetCoords(Coord{0, 0}, Coord{20, 20})
-	expected := Bounds{layout: XY, min: Coord{0, 0}, max: Coord{20, 20}}
+	expected := Bounds{Lay: XY, min: Coord{0, 0}, max: Coord{20, 20}}
 	assert.Equal(t, expected, *bounds)
 
 	bounds = NewBounds(XY)

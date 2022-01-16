@@ -9,17 +9,17 @@ type CoordStack struct {
 	// Data is the stack data.  the order is the most recent pushes are at the end of the slice and the oldest
 	// are at the start
 	Data   []float64
-	stride int
+	Strd int
 }
 
-// NewCoordStack creates a new stack with the stride indicated in the layout
-func NewCoordStack(layout geom.Layout) *CoordStack {
-	return &CoordStack{stride: layout.Stride()}
+// NewCoordStack creates a new stack with the Strd indicated in the Lay
+func NewCoordStack(Lay geom.Layout) *CoordStack {
+	return &CoordStack{Strd: Lay.Stride()}
 }
 
 // Push puts the coordinate at the location idx onto the stack.
 func (stack *CoordStack) Push(data []float64, idx int) []float64 {
-	c := data[idx : idx+stack.stride]
+	c := data[idx : idx+stack.Strd]
 	stack.Data = append(stack.Data, c...)
 	return c
 }
@@ -27,7 +27,7 @@ func (stack *CoordStack) Push(data []float64, idx int) []float64 {
 // Pop the last pushed coordinate off the stack and return the coordinate
 func (stack *CoordStack) Pop() ([]float64, int) {
 	numOrds := len(stack.Data)
-	start := numOrds - stack.stride
+	start := numOrds - stack.Strd
 	coord := stack.Data[start:numOrds]
 	stack.Data = stack.Data[:start]
 	return coord, stack.Size()
@@ -36,12 +36,12 @@ func (stack *CoordStack) Pop() ([]float64, int) {
 // Peek returns the most recently pushed coord without modifying the stack
 func (stack *CoordStack) Peek() []float64 {
 	numOrds := len(stack.Data)
-	start := numOrds - stack.stride
+	start := numOrds - stack.Strd
 	coord := stack.Data[start:numOrds]
 	return coord
 }
 
 // Size returns the number of coordinates in the stack
 func (stack *CoordStack) Size() int {
-	return len(stack.Data) / stack.stride
+	return len(stack.Data) / stack.Strd
 }

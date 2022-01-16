@@ -11,9 +11,9 @@ import (
 var _ T = &MultiLineString{}
 
 type expectedLineString struct {
-	layout     Layout
-	stride     int
-	flatCoords []float64
+	Lay     Layout
+	Strd     int
+	FlatCoord []float64
 	coords     []Coord
 	bounds     *Bounds
 }
@@ -21,9 +21,9 @@ type expectedLineString struct {
 func (g *LineString) assertEquals(t *testing.T, e *expectedLineString) {
 	t.Helper()
 	assert.NoError(t, g.verify())
-	assert.Equal(t, e.layout, g.Layout())
-	assert.Equal(t, e.stride, g.Stride())
-	assert.Equal(t, e.flatCoords, g.FlatCoords())
+	assert.Equal(t, e.Lay, g.Layout())
+	assert.Equal(t, e.Strd, g.Stride())
+	assert.Equal(t, e.FlatCoord, g.FlatCoords())
 	assert.Nil(t, g.Ends())
 	assert.Nil(t, g.Endss())
 	assert.Equal(t, e.coords, g.Coords())
@@ -42,9 +42,9 @@ func TestLineString(t *testing.T) {
 		{
 			ls: NewLineString(XY).MustSetCoords([]Coord{{1, 2}, {3, 4}, {5, 6}}),
 			expected: &expectedLineString{
-				layout:     XY,
-				stride:     2,
-				flatCoords: []float64{1, 2, 3, 4, 5, 6},
+				Lay:     XY,
+				Strd:     2,
+				FlatCoord: []float64{1, 2, 3, 4, 5, 6},
 				coords:     []Coord{{1, 2}, {3, 4}, {5, 6}},
 				bounds:     NewBounds(XY).Set(1, 2, 5, 6),
 			},
@@ -52,9 +52,9 @@ func TestLineString(t *testing.T) {
 		{
 			ls: NewLineString(XYZ).MustSetCoords([]Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
 			expected: &expectedLineString{
-				layout:     XYZ,
-				stride:     3,
-				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
+				Lay:     XYZ,
+				Strd:     3,
+				FlatCoord: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
 				coords:     []Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
 				bounds:     NewBounds(XYZ).Set(1, 2, 3, 7, 8, 9),
 			},
@@ -62,9 +62,9 @@ func TestLineString(t *testing.T) {
 		{
 			ls: NewLineString(XYM).MustSetCoords([]Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
 			expected: &expectedLineString{
-				layout:     XYM,
-				stride:     3,
-				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
+				Lay:     XYM,
+				Strd:     3,
+				FlatCoord: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
 				coords:     []Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
 				bounds:     NewBounds(XYM).Set(1, 2, 3, 7, 8, 9),
 			},
@@ -72,9 +72,9 @@ func TestLineString(t *testing.T) {
 		{
 			ls: NewLineString(XYZM).MustSetCoords([]Coord{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}}),
 			expected: &expectedLineString{
-				layout:     XYZM,
-				stride:     4,
-				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+				Lay:     XYZM,
+				Strd:     4,
+				FlatCoord: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 				coords:     []Coord{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}},
 				bounds:     NewBounds(XYZM).Set(1, 2, 3, 4, 9, 10, 11, 12),
 			},
@@ -116,9 +116,9 @@ func TestLineStringInterpolateEmpty(t *testing.T) {
 
 func TestLineStringReserve(t *testing.T) {
 	ls := NewLineString(XYZM)
-	assert.Equal(t, 0, cap(ls.flatCoords))
+	assert.Equal(t, 0, cap(ls.FlatCoord))
 	ls.Reserve(2)
-	assert.Equal(t, 8, cap(ls.flatCoords))
+	assert.Equal(t, 8, cap(ls.FlatCoord))
 }
 
 func TestLineStringStrideMismatch(t *testing.T) {

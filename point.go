@@ -13,10 +13,10 @@ func PointEmptyCoord() float64 {
 
 // A Point represents a single point.
 type Point struct {
-	geom0
+	Geom0
 }
 
-// NewPoint allocates a new Point with layout l and all values zero.
+// NewPoint allocates a new Point with Lay l and all values zero.
 func NewPoint(l Layout) *Point {
 	return NewPointFlat(l, make([]float64, l.Stride()))
 }
@@ -26,29 +26,29 @@ func NewPointEmpty(l Layout) *Point {
 	return NewPointFlat(l, nil)
 }
 
-// NewPointFlat allocates a new Point with layout l and flat coordinates flatCoords.
-func NewPointFlat(l Layout, flatCoords []float64) *Point {
+// NewPointFlat allocates a new Point with Lay l and flat coordinates FlatCoord.
+func NewPointFlat(l Layout, FlatCoord []float64) *Point {
 	g := new(Point)
-	g.layout = l
-	g.stride = l.Stride()
-	g.flatCoords = flatCoords
+	g.Lay = l
+	g.Strd = l.Stride()
+	g.FlatCoord = FlatCoord
 	return g
 }
 
 // NewPointFlatMaybeEmpty returns a new point, checking whether the point may be empty
 // by checking wther all the points are NaN.
-func NewPointFlatMaybeEmpty(layout Layout, flatCoords []float64) *Point {
+func NewPointFlatMaybeEmpty(Lay Layout, FlatCoord []float64) *Point {
 	isEmpty := true
-	for _, coord := range flatCoords {
+	for _, coord := range FlatCoord {
 		if math.Float64bits(coord) != PointEmptyCoordHex {
 			isEmpty = false
 			break
 		}
 	}
 	if isEmpty {
-		return NewPointEmpty(layout)
+		return NewPointEmpty(Lay)
 	}
-	return NewPointFlat(layout, flatCoords)
+	return NewPointFlat(Lay, FlatCoord)
 }
 
 // Area returns g's area, i.e. zero.
@@ -81,8 +81,8 @@ func (g *Point) SetCoords(coords Coord) (*Point, error) {
 }
 
 // SetSRID sets the SRID of g.
-func (g *Point) SetSRID(srid int) *Point {
-	g.srid = srid
+func (g *Point) SetSRID(Srid int) *Point {
+	g.Srid = Srid
 	return g
 }
 
@@ -93,28 +93,28 @@ func (g *Point) Swap(g2 *Point) {
 
 // X returns g's X-coordinate.
 func (g *Point) X() float64 {
-	return g.flatCoords[0]
+	return g.FlatCoord[0]
 }
 
 // Y returns g's Y-coordinate.
 func (g *Point) Y() float64 {
-	return g.flatCoords[1]
+	return g.FlatCoord[1]
 }
 
 // Z returns g's Z-coordinate, or zero if g has no Z-coordinate.
 func (g *Point) Z() float64 {
-	zIndex := g.layout.ZIndex()
+	zIndex := g.Lay.ZIndex()
 	if zIndex == -1 {
 		return 0
 	}
-	return g.flatCoords[zIndex]
+	return g.FlatCoord[zIndex]
 }
 
 // M returns g's M-coordinate, or zero if g has no M-coordinate.
 func (g *Point) M() float64 {
-	mIndex := g.layout.MIndex()
+	mIndex := g.Lay.MIndex()
 	if mIndex == -1 {
 		return 0
 	}
-	return g.flatCoords[mIndex]
+	return g.FlatCoord[mIndex]
 }

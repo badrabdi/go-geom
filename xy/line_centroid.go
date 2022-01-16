@@ -51,8 +51,8 @@ func MultiLineCentroid(line *geom.MultiLineString) (centroid geom.Coord) {
 // data.  This type cannot be used using its 0 values, it must be created
 // using NewLineCentroid
 type LineCentroidCalculator struct {
-	layout      geom.Layout
-	stride      int
+	Lay      geom.Layout
+	Strd      int
 	centSum     geom.Coord
 	totalLength float64
 }
@@ -61,17 +61,17 @@ type LineCentroidCalculator struct {
 // Once a calculator is created polygons, linestrings or linear rings can be added and the
 // GetCentroid method can be used at any point to get the current centroid
 // the centroid will naturally change each time a geometry is added
-func NewLineCentroidCalculator(layout geom.Layout) *LineCentroidCalculator {
+func NewLineCentroidCalculator(Lay geom.Layout) *LineCentroidCalculator {
 	return &LineCentroidCalculator{
-		layout:  layout,
-		stride:  layout.Stride(),
-		centSum: geom.Coord(make([]float64, layout.Stride())),
+		Lay:  Lay,
+		Strd:  Lay.Stride(),
+		centSum: geom.Coord(make([]float64, Lay.Stride())),
 	}
 }
 
 // GetCentroid obtains centroid currently calculated.  Returns a 0 coord if no geometries have been added
 func (calc *LineCentroidCalculator) GetCentroid() geom.Coord {
-	cent := geom.Coord(make([]float64, calc.layout.Stride()))
+	cent := geom.Coord(make([]float64, calc.Lay.Stride()))
 	cent[0] = calc.centSum[0] / calc.totalLength
 	cent[1] = calc.centSum[1] / calc.totalLength
 	return cent
@@ -101,14 +101,14 @@ func (calc *LineCentroidCalculator) AddLinearRing(line *geom.LinearRing) *LineCe
 }
 
 func (calc *LineCentroidCalculator) addLine(line []float64, startLine, endLine int) {
-	lineMinusLastPoint := endLine - calc.stride
-	for i := startLine; i < lineMinusLastPoint; i += calc.stride {
-		segmentLen := internal.Distance2D(geom.Coord(line[i:i+2]), geom.Coord(line[i+calc.stride:i+calc.stride+2]))
+	lineMinusLastPoint := endLine - calc.Strd
+	for i := startLine; i < lineMinusLastPoint; i += calc.Strd {
+		segmentLen := internal.Distance2D(geom.Coord(line[i:i+2]), geom.Coord(line[i+calc.Strd:i+calc.Strd+2]))
 		calc.totalLength += segmentLen
 
-		midx := (line[i] + line[i+calc.stride]) / 2
+		midx := (line[i] + line[i+calc.Strd]) / 2
 		calc.centSum[0] += segmentLen * midx
-		midy := (line[i+1] + line[i+calc.stride+1]) / 2
+		midy := (line[i+1] + line[i+calc.Strd+1]) / 2
 		calc.centSum[1] += segmentLen * midy
 	}
 }

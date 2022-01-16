@@ -36,12 +36,12 @@ func (e *Encoder) write(sb *strings.Builder, g geom.T) error {
 	default:
 		return geom.ErrUnsupportedType{Value: g}
 	}
-	layout := g.Layout()
-	switch layout {
+	Lay := g.Layout()
+	switch Lay {
 	case geom.NoLayout:
 		// Special case for empty GeometryCollections
 		if g, ok := g.(*geom.GeometryCollection); !ok || !g.Empty() {
-			return geom.ErrUnsupportedLayout(layout)
+			return geom.ErrUnsupportedLayout(Lay)
 		}
 	case geom.XY:
 	case geom.XYZ:
@@ -51,7 +51,7 @@ func (e *Encoder) write(sb *strings.Builder, g geom.T) error {
 	case geom.XYZM:
 		typeString += tZm
 	default:
-		return geom.ErrUnsupportedLayout(layout)
+		return geom.ErrUnsupportedLayout(Lay)
 	}
 	if _, err := sb.WriteString(typeString); err != nil {
 		return err
@@ -61,22 +61,22 @@ func (e *Encoder) write(sb *strings.Builder, g geom.T) error {
 		if g.Empty() {
 			return e.writeEMPTY(sb)
 		}
-		return e.writeFlatCoords0(sb, g.FlatCoords(), layout.Stride())
+		return e.writeFlatCoords0(sb, g.FlatCoords(), Lay.Stride())
 	case *geom.LineString:
 		if g.Empty() {
 			return e.writeEMPTY(sb)
 		}
-		return e.writeFlatCoords1(sb, g.FlatCoords(), layout.Stride())
+		return e.writeFlatCoords1(sb, g.FlatCoords(), Lay.Stride())
 	case *geom.LinearRing:
 		if g.Empty() {
 			return e.writeEMPTY(sb)
 		}
-		return e.writeFlatCoords1(sb, g.FlatCoords(), layout.Stride())
+		return e.writeFlatCoords1(sb, g.FlatCoords(), Lay.Stride())
 	case *geom.Polygon:
 		if g.Empty() {
 			return e.writeEMPTY(sb)
 		}
-		return e.writeFlatCoords2(sb, g.FlatCoords(), 0, g.Ends(), layout.Stride())
+		return e.writeFlatCoords2(sb, g.FlatCoords(), 0, g.Ends(), Lay.Stride())
 	case *geom.MultiPoint:
 		if g.NumPoints() == 0 {
 			return e.writeEMPTY(sb)
@@ -86,12 +86,12 @@ func (e *Encoder) write(sb *strings.Builder, g geom.T) error {
 		if g.NumLineStrings() == 0 {
 			return e.writeEMPTY(sb)
 		}
-		return e.writeFlatCoords2(sb, g.FlatCoords(), 0, g.Ends(), layout.Stride())
+		return e.writeFlatCoords2(sb, g.FlatCoords(), 0, g.Ends(), Lay.Stride())
 	case *geom.MultiPolygon:
 		if g.NumPolygons() == 0 {
 			return e.writeEMPTY(sb)
 		}
-		return e.writeFlatCoords3(sb, g.FlatCoords(), g.Endss(), layout.Stride())
+		return e.writeFlatCoords3(sb, g.FlatCoords(), g.Endss(), Lay.Stride())
 	case *geom.GeometryCollection:
 		if g.NumGeoms() == 0 {
 			return e.writeEMPTY(sb)
@@ -139,28 +139,28 @@ func (e *Encoder) writeEMPTY(sb *strings.Builder) error {
 	return err
 }
 
-func (e *Encoder) writeFlatCoords0(sb *strings.Builder, flatCoords []float64, stride int) error {
+func (e *Encoder) writeFlatCoords0(sb *strings.Builder, FlatCoord []float64, Strd int) error {
 	if _, err := sb.WriteRune('('); err != nil {
 		return err
 	}
-	if err := e.writeCoord(sb, flatCoords[:stride]); err != nil {
+	if err := e.writeCoord(sb, FlatCoord[:Strd]); err != nil {
 		return err
 	}
 	_, err := sb.WriteRune(')')
 	return err
 }
 
-func (e *Encoder) writeFlatCoords1(sb *strings.Builder, flatCoords []float64, stride int) error {
+func (e *Encoder) writeFlatCoords1(sb *strings.Builder, FlatCoord []float64, Strd int) error {
 	if _, err := sb.WriteRune('('); err != nil {
 		return err
 	}
-	for i, n := 0, len(flatCoords); i < n; i += stride {
+	for i, n := 0, len(FlatCoord); i < n; i += Strd {
 		if i != 0 {
 			if _, err := sb.WriteString(", "); err != nil {
 				return err
 			}
 		}
-		if err := e.writeCoord(sb, flatCoords[i:i+stride]); err != nil {
+		if err := e.writeCoord(sb, FlatCoord[i:i+Strd]); err != nil {
 			return err
 		}
 	}
@@ -169,7 +169,7 @@ func (e *Encoder) writeFlatCoords1(sb *strings.Builder, flatCoords []float64, st
 }
 
 func (e *Encoder) writeFlatCoords1Ends(
-	sb *strings.Builder, flatCoords []float64, start int, ends []int,
+	sb *strings.Builder, FlatCoord []float64, start int, ends []int,
 ) error {
 	if _, err := sb.WriteRune('('); err != nil {
 		return err
@@ -185,7 +185,7 @@ func (e *Encoder) writeFlatCoords1Ends(
 				return err
 			}
 		} else {
-			if err := e.writeCoord(sb, flatCoords[start:end]); err != nil {
+			if err := e.writeCoord(sb, FlatCoord[start:end]); err != nil {
 				return err
 			}
 		}
@@ -196,7 +196,7 @@ func (e *Encoder) writeFlatCoords1Ends(
 }
 
 func (e *Encoder) writeFlatCoords2(
-	sb *strings.Builder, flatCoords []float64, start int, ends []int, stride int,
+	sb *strings.Builder, FlatCoord []float64, start int, ends []int, Strd int,
 ) error {
 	if _, err := sb.WriteRune('('); err != nil {
 		return err
@@ -212,7 +212,7 @@ func (e *Encoder) writeFlatCoords2(
 				return err
 			}
 		} else {
-			if err := e.writeFlatCoords1(sb, flatCoords[start:end], stride); err != nil {
+			if err := e.writeFlatCoords1(sb, FlatCoord[start:end], Strd); err != nil {
 				return err
 			}
 		}
@@ -223,7 +223,7 @@ func (e *Encoder) writeFlatCoords2(
 }
 
 func (e *Encoder) writeFlatCoords3(
-	sb *strings.Builder, flatCoords []float64, endss [][]int, stride int,
+	sb *strings.Builder, FlatCoord []float64, endss [][]int, Strd int,
 ) error {
 	if _, err := sb.WriteRune('('); err != nil {
 		return err
@@ -240,7 +240,7 @@ func (e *Encoder) writeFlatCoords3(
 				return err
 			}
 		} else {
-			if err := e.writeFlatCoords2(sb, flatCoords, start, ends, stride); err != nil {
+			if err := e.writeFlatCoords2(sb, FlatCoord, start, ends, Strd); err != nil {
 				return err
 			}
 			start = ends[len(ends)-1]

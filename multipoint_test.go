@@ -12,9 +12,9 @@ import (
 var _ T = &MultiPoint{}
 
 type expectedMultiPoint struct {
-	layout     Layout
-	stride     int
-	flatCoords []float64
+	Lay     Layout
+	Strd     int
+	FlatCoord []float64
 	ends       []int
 	coords     []Coord
 	bounds     *Bounds
@@ -23,9 +23,9 @@ type expectedMultiPoint struct {
 func (g *MultiPoint) assertEquals(t *testing.T, e *expectedMultiPoint) {
 	t.Helper()
 	assert.NoError(t, g.verify())
-	assert.Equal(t, e.layout, g.Layout())
-	assert.Equal(t, e.stride, g.Stride())
-	assert.Equal(t, e.flatCoords, g.FlatCoords())
+	assert.Equal(t, e.Lay, g.Layout())
+	assert.Equal(t, e.Strd, g.Stride())
+	assert.Equal(t, e.FlatCoord, g.FlatCoords())
 	assert.Equal(t, e.ends, g.Ends())
 	assert.Nil(t, g.Endss())
 	assert.Equal(t, e.coords, g.Coords())
@@ -44,10 +44,10 @@ func TestMultiPoint(t *testing.T) {
 		{
 			mp: NewMultiPoint(XY).MustSetCoords([]Coord{}),
 			expected: &expectedMultiPoint{
-				layout:     XY,
-				stride:     2,
+				Lay:     XY,
+				Strd:     2,
 				coords:     []Coord{},
-				flatCoords: nil,
+				FlatCoord: nil,
 				ends:       nil,
 				bounds:     NewBounds(XY).Set(math.Inf(1), math.Inf(1), math.Inf(-1), math.Inf(-1)),
 			},
@@ -55,10 +55,10 @@ func TestMultiPoint(t *testing.T) {
 		{
 			mp: NewMultiPoint(XY).MustSetCoords([]Coord{nil, nil, nil}),
 			expected: &expectedMultiPoint{
-				layout:     XY,
-				stride:     2,
+				Lay:     XY,
+				Strd:     2,
 				coords:     []Coord{nil, nil, nil},
-				flatCoords: nil,
+				FlatCoord: nil,
 				ends:       []int{0, 0, 0},
 				bounds:     NewBounds(XY).Set(math.Inf(1), math.Inf(1), math.Inf(-1), math.Inf(-1)),
 			},
@@ -66,10 +66,10 @@ func TestMultiPoint(t *testing.T) {
 		{
 			mp: NewMultiPoint(XY).MustSetCoords([]Coord{{1, 2}, {3, 4}, {5, 6}}),
 			expected: &expectedMultiPoint{
-				layout:     XY,
-				stride:     2,
+				Lay:     XY,
+				Strd:     2,
 				coords:     []Coord{{1, 2}, {3, 4}, {5, 6}},
-				flatCoords: []float64{1, 2, 3, 4, 5, 6},
+				FlatCoord: []float64{1, 2, 3, 4, 5, 6},
 				ends:       []int{2, 4, 6},
 				bounds:     NewBounds(XY).Set(1, 2, 5, 6),
 			},
@@ -77,10 +77,10 @@ func TestMultiPoint(t *testing.T) {
 		{
 			mp: NewMultiPointFlat(XY, []float64{1, 2, 3, 4, 5, 6}),
 			expected: &expectedMultiPoint{
-				layout:     XY,
-				stride:     2,
+				Lay:     XY,
+				Strd:     2,
 				coords:     []Coord{{1, 2}, {3, 4}, {5, 6}},
-				flatCoords: []float64{1, 2, 3, 4, 5, 6},
+				FlatCoord: []float64{1, 2, 3, 4, 5, 6},
 				ends:       []int{2, 4, 6},
 				bounds:     NewBounds(XY).Set(1, 2, 5, 6),
 			},
@@ -88,10 +88,10 @@ func TestMultiPoint(t *testing.T) {
 		{
 			mp: NewMultiPointFlat(XY, []float64{1, 2, 3, 4, 5, 6}, NewMultiPointFlatOptionWithEnds([]int{0, 2, 4, 6, 6})),
 			expected: &expectedMultiPoint{
-				layout:     XY,
-				stride:     2,
+				Lay:     XY,
+				Strd:     2,
 				coords:     []Coord{nil, {1, 2}, {3, 4}, {5, 6}, nil},
-				flatCoords: []float64{1, 2, 3, 4, 5, 6},
+				FlatCoord: []float64{1, 2, 3, 4, 5, 6},
 				ends:       []int{0, 2, 4, 6, 6},
 				bounds:     NewBounds(XY).Set(1, 2, 5, 6),
 			},
@@ -99,10 +99,10 @@ func TestMultiPoint(t *testing.T) {
 		{
 			mp: NewMultiPoint(XY).MustSetCoords([]Coord{nil, {1, 2}, nil, {3, 4}, nil, {5, 6}, nil}),
 			expected: &expectedMultiPoint{
-				layout:     XY,
-				stride:     2,
+				Lay:     XY,
+				Strd:     2,
 				coords:     []Coord{nil, {1, 2}, nil, {3, 4}, nil, {5, 6}, nil},
-				flatCoords: []float64{1, 2, 3, 4, 5, 6},
+				FlatCoord: []float64{1, 2, 3, 4, 5, 6},
 				ends:       []int{0, 2, 2, 4, 4, 6, 6},
 				bounds:     NewBounds(XY).Set(1, 2, 5, 6),
 			},
@@ -110,10 +110,10 @@ func TestMultiPoint(t *testing.T) {
 		{
 			mp: NewMultiPoint(XYZ).MustSetCoords([]Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
 			expected: &expectedMultiPoint{
-				layout:     XYZ,
-				stride:     3,
+				Lay:     XYZ,
+				Strd:     3,
 				coords:     []Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
-				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
+				FlatCoord: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
 				ends:       []int{3, 6, 9},
 				bounds:     NewBounds(XYZ).Set(1, 2, 3, 7, 8, 9),
 			},
@@ -121,10 +121,10 @@ func TestMultiPoint(t *testing.T) {
 		{
 			mp: NewMultiPoint(XYM).MustSetCoords([]Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}),
 			expected: &expectedMultiPoint{
-				layout:     XYM,
-				stride:     3,
+				Lay:     XYM,
+				Strd:     3,
 				coords:     []Coord{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}},
-				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
+				FlatCoord: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9},
 				ends:       []int{3, 6, 9},
 				bounds:     NewBounds(XYM).Set(1, 2, 3, 7, 8, 9),
 			},
@@ -132,10 +132,10 @@ func TestMultiPoint(t *testing.T) {
 		{
 			mp: NewMultiPoint(XYZM).MustSetCoords([]Coord{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}}),
 			expected: &expectedMultiPoint{
-				layout:     XYZM,
-				stride:     4,
+				Lay:     XYZM,
+				Strd:     4,
 				coords:     []Coord{{1, 2, 3, 4}, {5, 6, 7, 8}, {9, 10, 11, 12}},
-				flatCoords: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
+				FlatCoord: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12},
 				ends:       []int{4, 8, 12},
 				bounds:     NewBounds(XYZM).Set(1, 2, 3, 4, 9, 10, 11, 12),
 			},
@@ -151,36 +151,36 @@ func TestMultiPoint(t *testing.T) {
 func TestMultiPointPush(t *testing.T) {
 	mp := NewMultiPoint(XY)
 	mp.assertEquals(t, &expectedMultiPoint{
-		layout: XY,
-		stride: 2,
+		Lay: XY,
+		Strd: 2,
 		coords: []Coord{},
 		ends:   nil,
 		bounds: NewBounds(XY),
 	})
 	assert.NoError(t, mp.Push(NewPoint(XY).MustSetCoords(Coord{1, 2})))
 	mp.assertEquals(t, &expectedMultiPoint{
-		layout:     XY,
-		stride:     2,
+		Lay:     XY,
+		Strd:     2,
 		coords:     []Coord{{1, 2}},
-		flatCoords: []float64{1, 2},
+		FlatCoord: []float64{1, 2},
 		ends:       []int{2},
 		bounds:     NewBounds(XY).Set(1, 2, 1, 2),
 	})
 	assert.NoError(t, mp.Push(NewPoint(XY).MustSetCoords(Coord{3, 4})))
 	mp.assertEquals(t, &expectedMultiPoint{
-		layout:     XY,
-		stride:     2,
+		Lay:     XY,
+		Strd:     2,
 		coords:     []Coord{{1, 2}, {3, 4}},
-		flatCoords: []float64{1, 2, 3, 4},
+		FlatCoord: []float64{1, 2, 3, 4},
 		ends:       []int{2, 4},
 		bounds:     NewBounds(XY).Set(1, 2, 3, 4),
 	})
 	assert.NoError(t, mp.Push(NewPointEmpty(XY)))
 	mp.assertEquals(t, &expectedMultiPoint{
-		layout:     XY,
-		stride:     2,
+		Lay:     XY,
+		Strd:     2,
 		coords:     []Coord{{1, 2}, {3, 4}, nil},
-		flatCoords: []float64{1, 2, 3, 4},
+		FlatCoord: []float64{1, 2, 3, 4},
 		ends:       []int{2, 4, 4},
 		bounds:     NewBounds(XY).Set(1, 2, 3, 4),
 	})

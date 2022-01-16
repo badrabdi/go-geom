@@ -227,7 +227,7 @@ linestring_non_base_type:
 polygon:
 	polygon_type flat_coords_polygon_ring_list_with_parens
 	{
-		$$ = geom.NewPolygonFlat(wktlex.(*wktLex).curLayout(), $2.flatCoords, $2.ends)
+		$$ = geom.NewPolygonFlat(wktlex.(*wktLex).curLayout(), $2.FlatCoord, $2.ends)
 	}
 |	polygon_base_type empty_in_base_type
 	{
@@ -278,13 +278,13 @@ multipoint:
 	multipoint_base_type multipoint_base_type_point_list_with_parens
 	{
 		$$ = geom.NewMultiPointFlat(
-			wktlex.(*wktLex).curLayout(), $2.flatCoords, geom.NewMultiPointFlatOptionWithEnds($2.ends),
+			wktlex.(*wktLex).curLayout(), $2.FlatCoord, geom.NewMultiPointFlatOptionWithEnds($2.ends),
 		)
 	}
 |	multipoint_non_base_type multipoint_non_base_type_point_list_with_parens
 	{
 		$$ = geom.NewMultiPointFlat(
-			wktlex.(*wktLex).curLayout(), $2.flatCoords, geom.NewMultiPointFlatOptionWithEnds($2.ends),
+			wktlex.(*wktLex).curLayout(), $2.FlatCoord, geom.NewMultiPointFlatOptionWithEnds($2.ends),
 		)
 	}
 |	multipoint_base_type empty_in_base_type
@@ -331,11 +331,11 @@ multipoint_non_base_type:
 multilinestring:
 	multilinestring_base_type multilinestring_base_type_linestring_list_with_parens
 	{
-		$$ = geom.NewMultiLineStringFlat(wktlex.(*wktLex).curLayout(), $2.flatCoords, $2.ends)
+		$$ = geom.NewMultiLineStringFlat(wktlex.(*wktLex).curLayout(), $2.FlatCoord, $2.ends)
 	}
 |	multilinestring_non_base_type multilinestring_non_base_type_linestring_list_with_parens
 	{
-		$$ = geom.NewMultiLineStringFlat(wktlex.(*wktLex).curLayout(), $2.flatCoords, $2.ends)
+		$$ = geom.NewMultiLineStringFlat(wktlex.(*wktLex).curLayout(), $2.FlatCoord, $2.ends)
 	}
 |	multilinestring_base_type empty_in_base_type
 	{
@@ -381,11 +381,11 @@ multilinestring_non_base_type:
 multipolygon:
 	multipolygon_base_type multipolygon_base_type_polygon_list_with_parens
 	{
-		$$ = geom.NewMultiPolygonFlat(wktlex.(*wktLex).curLayout(), $2.flatCoords, $2.endss)
+		$$ = geom.NewMultiPolygonFlat(wktlex.(*wktLex).curLayout(), $2.FlatCoord, $2.endss)
 	}
 |	multipolygon_non_base_type multipolygon_non_base_type_polygon_list_with_parens
 	{
-		$$ = geom.NewMultiPolygonFlat(wktlex.(*wktLex).curLayout(), $2.flatCoords, $2.endss)
+		$$ = geom.NewMultiPolygonFlat(wktlex.(*wktLex).curLayout(), $2.FlatCoord, $2.endss)
 	}
 |	multipolygon_base_type empty_in_base_type
 	{

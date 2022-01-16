@@ -6,22 +6,22 @@ type LinearRing struct {
 }
 
 // NewLinearRing returns a new LinearRing with no coordinates.
-func NewLinearRing(layout Layout) *LinearRing {
-	return NewLinearRingFlat(layout, nil)
+func NewLinearRing(Lay Layout) *LinearRing {
+	return NewLinearRingFlat(Lay, nil)
 }
 
 // NewLinearRingFlat returns a new LinearRing with the given flat coordinates.
-func NewLinearRingFlat(layout Layout, flatCoords []float64) *LinearRing {
+func NewLinearRingFlat(Lay Layout, FlatCoord []float64) *LinearRing {
 	g := new(LinearRing)
-	g.layout = layout
-	g.stride = layout.Stride()
-	g.flatCoords = flatCoords
+	g.Lay = Lay
+	g.Strd = Lay.Stride()
+	g.FlatCoord = FlatCoord
 	return g
 }
 
 // Area returns the the area.
 func (g *LinearRing) Area() float64 {
-	return doubleArea1(g.flatCoords, 0, len(g.flatCoords), g.stride) / 2
+	return doubleArea1(g.FlatCoord, 0, len(g.FlatCoord), g.Strd) / 2
 }
 
 // Clone returns a deep copy.
@@ -31,7 +31,7 @@ func (g *LinearRing) Clone() *LinearRing {
 
 // Length returns the length of the perimeter.
 func (g *LinearRing) Length() float64 {
-	return length1(g.flatCoords, 0, len(g.flatCoords), g.stride)
+	return length1(g.FlatCoord, 0, len(g.FlatCoord), g.Strd)
 }
 
 // MustSetCoords sets the coordinates and panics if there is any error.
@@ -49,8 +49,8 @@ func (g *LinearRing) SetCoords(coords []Coord) (*LinearRing, error) {
 }
 
 // SetSRID sets the SRID of g.
-func (g *LinearRing) SetSRID(srid int) *LinearRing {
-	g.srid = srid
+func (g *LinearRing) SetSRID(Srid int) *LinearRing {
+	g.Srid = Srid
 	return g
 }
 

@@ -711,7 +711,7 @@ wktdefault:
 	case 27:
 		wktDollar = wktS[wktpt-2 : wktpt+1]
 		{
-			wktVAL.geom = geom.NewPolygonFlat(wktlex.(*wktLex).curLayout(), wktDollar[2].flatRepr.flatCoords, wktDollar[2].flatRepr.ends)
+			wktVAL.geom = geom.NewPolygonFlat(wktlex.(*wktLex).curLayout(), wktDollar[2].flatRepr.FlatCoord, wktDollar[2].flatRepr.ends)
 		}
 	case 28:
 		wktDollar = wktS[wktpt-2 : wktpt+1]
@@ -759,14 +759,14 @@ wktdefault:
 		wktDollar = wktS[wktpt-2 : wktpt+1]
 		{
 			wktVAL.geom = geom.NewMultiPointFlat(
-				wktlex.(*wktLex).curLayout(), wktDollar[2].flatRepr.flatCoords, geom.NewMultiPointFlatOptionWithEnds(wktDollar[2].flatRepr.ends),
+				wktlex.(*wktLex).curLayout(), wktDollar[2].flatRepr.FlatCoord, geom.NewMultiPointFlatOptionWithEnds(wktDollar[2].flatRepr.ends),
 			)
 		}
 	case 37:
 		wktDollar = wktS[wktpt-2 : wktpt+1]
 		{
 			wktVAL.geom = geom.NewMultiPointFlat(
-				wktlex.(*wktLex).curLayout(), wktDollar[2].flatRepr.flatCoords, geom.NewMultiPointFlatOptionWithEnds(wktDollar[2].flatRepr.ends),
+				wktlex.(*wktLex).curLayout(), wktDollar[2].flatRepr.FlatCoord, geom.NewMultiPointFlatOptionWithEnds(wktDollar[2].flatRepr.ends),
 			)
 		}
 	case 38:
@@ -814,12 +814,12 @@ wktdefault:
 	case 44:
 		wktDollar = wktS[wktpt-2 : wktpt+1]
 		{
-			wktVAL.geom = geom.NewMultiLineStringFlat(wktlex.(*wktLex).curLayout(), wktDollar[2].flatRepr.flatCoords, wktDollar[2].flatRepr.ends)
+			wktVAL.geom = geom.NewMultiLineStringFlat(wktlex.(*wktLex).curLayout(), wktDollar[2].flatRepr.FlatCoord, wktDollar[2].flatRepr.ends)
 		}
 	case 45:
 		wktDollar = wktS[wktpt-2 : wktpt+1]
 		{
-			wktVAL.geom = geom.NewMultiLineStringFlat(wktlex.(*wktLex).curLayout(), wktDollar[2].flatRepr.flatCoords, wktDollar[2].flatRepr.ends)
+			wktVAL.geom = geom.NewMultiLineStringFlat(wktlex.(*wktLex).curLayout(), wktDollar[2].flatRepr.FlatCoord, wktDollar[2].flatRepr.ends)
 		}
 	case 46:
 		wktDollar = wktS[wktpt-2 : wktpt+1]
@@ -866,12 +866,12 @@ wktdefault:
 	case 52:
 		wktDollar = wktS[wktpt-2 : wktpt+1]
 		{
-			wktVAL.geom = geom.NewMultiPolygonFlat(wktlex.(*wktLex).curLayout(), wktDollar[2].multiPolyFlatRepr.flatCoords, wktDollar[2].multiPolyFlatRepr.endss)
+			wktVAL.geom = geom.NewMultiPolygonFlat(wktlex.(*wktLex).curLayout(), wktDollar[2].multiPolyFlatRepr.FlatCoord, wktDollar[2].multiPolyFlatRepr.endss)
 		}
 	case 53:
 		wktDollar = wktS[wktpt-2 : wktpt+1]
 		{
-			wktVAL.geom = geom.NewMultiPolygonFlat(wktlex.(*wktLex).curLayout(), wktDollar[2].multiPolyFlatRepr.flatCoords, wktDollar[2].multiPolyFlatRepr.endss)
+			wktVAL.geom = geom.NewMultiPolygonFlat(wktlex.(*wktLex).curLayout(), wktDollar[2].multiPolyFlatRepr.FlatCoord, wktDollar[2].multiPolyFlatRepr.endss)
 		}
 	case 54:
 		wktDollar = wktS[wktpt-2 : wktpt+1]

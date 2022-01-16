@@ -104,8 +104,8 @@ const (
 )
 
 // ReadFlatCoords0 reads flat coordinates 0.
-func ReadFlatCoords0(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]float64, error) {
-	coord := make([]float64, stride)
+func ReadFlatCoords0(r io.Reader, byteOrder binary.ByteOrder, Strd int) ([]float64, error) {
+	coord := make([]float64, Strd)
 	if err := ReadFloatArray(r, byteOrder, coord); err != nil {
 		return nil, err
 	}
@@ -113,7 +113,7 @@ func ReadFlatCoords0(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]flo
 }
 
 // ReadFlatCoords1 reads flat coordinates 1.
-func ReadFlatCoords1(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]float64, error) {
+func ReadFlatCoords1(r io.Reader, byteOrder binary.ByteOrder, Strd int) ([]float64, error) {
 	n, err := ReadUInt32(r, byteOrder)
 	if err != nil {
 		return nil, err
@@ -121,15 +121,15 @@ func ReadFlatCoords1(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]flo
 	if limit := MaxGeometryElements[1]; limit >= 0 && int(n) > limit {
 		return nil, ErrGeometryTooLarge{Level: 1, N: int(n), Limit: limit}
 	}
-	flatCoords := make([]float64, int(n)*stride)
-	if err := ReadFloatArray(r, byteOrder, flatCoords); err != nil {
+	FlatCoord := make([]float64, int(n)*Strd)
+	if err := ReadFloatArray(r, byteOrder, FlatCoord); err != nil {
 		return nil, err
 	}
-	return flatCoords, nil
+	return FlatCoord, nil
 }
 
 // ReadFlatCoords2 reads flat coordinates 2.
-func ReadFlatCoords2(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]float64, []int, error) {
+func ReadFlatCoords2(r io.Reader, byteOrder binary.ByteOrder, Strd int) ([]float64, []int, error) {
 	n, err := ReadUInt32(r, byteOrder)
 	if err != nil {
 		return nil, nil, err
@@ -140,11 +140,11 @@ func ReadFlatCoords2(r io.Reader, byteOrder binary.ByteOrder, stride int) ([]flo
 	var flatCoordss []float64
 	var ends []int
 	for i := 0; i < int(n); i++ {
-		flatCoords, err := ReadFlatCoords1(r, byteOrder, stride)
+		FlatCoord, err := ReadFlatCoords1(r, byteOrder, Strd)
 		if err != nil {
 			return nil, nil, err
 		}
-		flatCoordss = append(flatCoordss, flatCoords...)
+		flatCoordss = append(flatCoordss, FlatCoord...)
 		ends = append(ends, len(flatCoordss))
 	}
 	return flatCoordss, ends, nil
@@ -156,21 +156,21 @@ func WriteFlatCoords0(w io.Writer, byteOrder binary.ByteOrder, coord []float64) 
 }
 
 // WriteFlatCoords1 writes flat coordinates 1.
-func WriteFlatCoords1(w io.Writer, byteOrder binary.ByteOrder, coords []float64, stride int) error {
-	if err := WriteUInt32(w, byteOrder, uint32(len(coords)/stride)); err != nil {
+func WriteFlatCoords1(w io.Writer, byteOrder binary.ByteOrder, coords []float64, Strd int) error {
+	if err := WriteUInt32(w, byteOrder, uint32(len(coords)/Strd)); err != nil {
 		return err
 	}
 	return WriteFloatArray(w, byteOrder, coords)
 }
 
 // WriteFlatCoords2 writes flat coordinates 2.
-func WriteFlatCoords2(w io.Writer, byteOrder binary.ByteOrder, flatCoords []float64, ends []int, stride int) error {
+func WriteFlatCoords2(w io.Writer, byteOrder binary.ByteOrder, FlatCoord []float64, ends []int, Strd int) error {
 	if err := WriteUInt32(w, byteOrder, uint32(len(ends))); err != nil {
 		return err
 	}
 	offset := 0
 	for _, end := range ends {
-		if err := WriteFlatCoords1(w, byteOrder, flatCoords[offset:end], stride); err != nil {
+		if err := WriteFlatCoords1(w, byteOrder, FlatCoord[offset:end], Strd); err != nil {
 			return err
 		}
 		offset = end

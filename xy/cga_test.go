@@ -26,53 +26,53 @@ func TestIsOnLine(t *testing.T) {
 		desc         string
 		p            geom.Coord
 		lineSegments []float64
-		layout       geom.Layout
+		Lay       geom.Layout
 		intersects   bool
 	}{
 		{
 			desc:         "Point on center of line",
 			p:            geom.Coord{0, 0},
 			lineSegments: []float64{-1, 0, 1, 0},
-			layout:       geom.XY,
+			Lay:       geom.XY,
 			intersects:   true,
 		},
 		{
 			desc:         "Point not on line",
 			p:            geom.Coord{0, 0},
 			lineSegments: []float64{-1, 1, 1, 0},
-			layout:       geom.XY,
+			Lay:       geom.XY,
 			intersects:   false,
 		},
 		{
 			desc:         "Point not on second line segment",
 			p:            geom.Coord{0, 0},
 			lineSegments: []float64{-1, 1, 1, 0, -1, 0},
-			layout:       geom.XY,
+			Lay:       geom.XY,
 			intersects:   true,
 		},
 		{
 			desc:         "Point not on any line segments",
 			p:            geom.Coord{0, 0},
 			lineSegments: []float64{-1, 1, 1, 0, 2, 0},
-			layout:       geom.XY,
+			Lay:       geom.XY,
 			intersects:   false,
 		},
 		{
 			desc:         "Point in unclosed ring",
 			p:            geom.Coord{0, 0},
 			lineSegments: []float64{-1, 1, 1, 1, 1, -1, -1, -1, -1, 1.00000000000000000000000000001},
-			layout:       geom.XY,
+			Lay:       geom.XY,
 			intersects:   false,
 		},
 		{
 			desc:         "Point in ring",
 			p:            geom.Coord{0, 0},
 			lineSegments: []float64{-1, 1, 1, 1, 1, -1, -1, -1, -1, 1},
-			layout:       geom.XY,
+			Lay:       geom.XY,
 			intersects:   false,
 		},
 	} {
-		if tc.intersects != xy.IsOnLine(tc.layout, tc.p, tc.lineSegments) {
+		if tc.intersects != xy.IsOnLine(tc.Lay, tc.p, tc.lineSegments) {
 			t.Errorf("Test '%v' (%v) failed: expected \n%v but was \n%v", i+1, tc.desc, tc.intersects, !tc.intersects)
 		}
 	}
@@ -301,23 +301,23 @@ func TestDistanceFromPointToMultiline(t *testing.T) {
 	for i, tc := range []struct {
 		p        geom.Coord
 		lines    []float64
-		layout   geom.Layout
+		Lay   geom.Layout
 		distance float64
 	}{
 		{
 			p:        geom.Coord{0, 0},
 			lines:    []float64{1, 0, 1, 1, 2, 0},
-			layout:   geom.XY,
+			Lay:   geom.XY,
 			distance: 1,
 		},
 		{
 			p:        geom.Coord{0, 0},
 			lines:    []float64{2, 0, 1, 1, 1, 0},
-			layout:   geom.XY,
+			Lay:   geom.XY,
 			distance: 1,
 		},
 	} {
-		calculatedDistance := xy.DistanceFromPointToLineString(tc.layout, tc.p, tc.lines)
+		calculatedDistance := xy.DistanceFromPointToLineString(tc.Lay, tc.p, tc.lines)
 		if tc.distance != calculatedDistance {
 			t.Errorf("Test '%v' failed: expected \n%v but was \n%v", i+1, tc.distance, calculatedDistance)
 		}
@@ -461,39 +461,39 @@ func TestIsPointInRing(t *testing.T) {
 		desc   string
 		p      geom.Coord
 		ring   []float64
-		layout geom.Layout
+		Lay geom.Layout
 		within bool
 	}{
 		{
 			desc:   "Point in ring",
 			p:      geom.Coord{0, 0},
 			ring:   []float64{-1, -1, 1, -1, 1, 1, -1, 1, -1, -1},
-			layout: geom.XY,
+			Lay: geom.XY,
 			within: true,
 		},
 		{
 			desc:   "Point on ring border",
 			p:      geom.Coord{-1, 0},
 			ring:   []float64{-1, -1, 1, -1, 1, 1, -1, 1, -1, -1},
-			layout: geom.XY,
+			Lay: geom.XY,
 			within: true,
 		},
 		{
 			desc:   "Point on ring vertex",
 			p:      geom.Coord{-1, -1},
 			ring:   []float64{-1, -1, 1, -1, 1, 1, -1, 1, -1, -1},
-			layout: geom.XY,
+			Lay: geom.XY,
 			within: true,
 		},
 		{
 			desc:   "Point outside of ring",
 			p:      geom.Coord{-2, -1},
 			ring:   []float64{-1, -1, 1, -1, 1, 1, -1, 1, -1, -1},
-			layout: geom.XY,
+			Lay: geom.XY,
 			within: false,
 		},
 	} {
-		if tc.within != xy.IsPointInRing(tc.layout, tc.p, tc.ring) {
+		if tc.within != xy.IsPointInRing(tc.Lay, tc.p, tc.ring) {
 			t.Errorf("Test '%v' (%v) failed: expected \n%v but was \n%v", i+1, tc.desc, tc.within, !tc.within)
 		}
 	}

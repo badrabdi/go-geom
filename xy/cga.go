@@ -37,8 +37,8 @@ func OrientationIndex(vectorOrigin, vectorEnd, point geom.Coord) orientation.Typ
 //        first point identical to last point)
 // Returns true if p is inside ring
 //
-func IsPointInRing(layout geom.Layout, p geom.Coord, ring []float64) bool {
-	return LocatePointInRing(layout, p, ring) != location.Exterior
+func IsPointInRing(Lay geom.Layout, p geom.Coord, ring []float64) bool {
+	return LocatePointInRing(Lay, p, ring) != location.Exterior
 }
 
 // LocatePointInRing determines whether a point lies in the interior, on the boundary, or in the
@@ -51,8 +51,8 @@ func IsPointInRing(layout geom.Layout, p geom.Coord, ring []float64) bool {
 // ring - an array of coordinates representing the ring (which must have
 //        first point identical to last point)
 // Returns the Location of p relative to the ring
-func LocatePointInRing(layout geom.Layout, p geom.Coord, ring []float64) location.Type {
-	return raycrossing.LocatePointInRing(layout, p, ring)
+func LocatePointInRing(Lay geom.Layout, p geom.Coord, ring []float64) location.Type {
+	return raycrossing.LocatePointInRing(Lay, p, ring)
 }
 
 // IsOnLine tests whether a point lies on the line segments defined by a list of
@@ -60,15 +60,15 @@ func LocatePointInRing(layout geom.Layout, p geom.Coord, ring []float64) locatio
 //
 // Returns true if the point is a vertex of the line or lies in the interior
 //         of a line segment in the linestring
-func IsOnLine(layout geom.Layout, point geom.Coord, lineSegmentCoordinates []float64) bool {
-	stride := layout.Stride()
-	if len(lineSegmentCoordinates) < (2 * stride) {
+func IsOnLine(Lay geom.Layout, point geom.Coord, lineSegmentCoordinates []float64) bool {
+	Strd := Lay.Stride()
+	if len(lineSegmentCoordinates) < (2 * Strd) {
 		panic(fmt.Sprintf("At least two coordinates are required in the lineSegmentsCoordinates array in 'algorithms.IsOnLine', was: %v", lineSegmentCoordinates))
 	}
 	strategy := lineintersector.RobustLineIntersector{}
 
-	for i := stride; i < len(lineSegmentCoordinates); i += stride {
-		segmentStart := lineSegmentCoordinates[i-stride : i-stride+2]
+	for i := Strd; i < len(lineSegmentCoordinates); i += Strd {
+		segmentStart := lineSegmentCoordinates[i-Strd : i-Strd+2]
 		segmentEnd := lineSegmentCoordinates[i : i+2]
 
 		if lineintersector.PointIntersectsLine(strategy, point, geom.Coord(segmentStart), geom.Coord(segmentEnd)) {
@@ -91,20 +91,20 @@ func IsOnLine(layout geom.Layout, point geom.Coord, lineSegmentCoordinates []flo
 // Param ring - an array of Coordinates forming a ring
 // Returns true if the ring is oriented counter-clockwise.
 // Panics if there are too few points to determine orientation (< 3)
-func IsRingCounterClockwise(layout geom.Layout, ring []float64) bool {
-	stride := layout.Stride()
+func IsRingCounterClockwise(Lay geom.Layout, ring []float64) bool {
+	Strd := Lay.Stride()
 
 	// # of ordinates without closing endpoint
-	nOrds := len(ring) - stride
+	nOrds := len(ring) - Strd
 	// # of points without closing endpoint
 	// sanity check
-	if nPts := nOrds / stride; nPts < 3 {
+	if nPts := nOrds / Strd; nPts < 3 {
 		panic("Ring has fewer than 3 points, so orientation cannot be determined")
 	}
 
 	// find highest point
 	hiIndex := 0
-	for i := stride; i <= len(ring)-stride; i += stride {
+	for i := Strd; i <= len(ring)-Strd; i += Strd {
 		if ring[i+1] > ring[hiIndex+1] {
 			hiIndex = i
 		}
@@ -113,7 +113,7 @@ func IsRingCounterClockwise(layout geom.Layout, ring []float64) bool {
 	// find distinct point before highest point
 	iPrev := hiIndex
 	for {
-		iPrev -= stride
+		iPrev -= Strd
 		if iPrev < 0 {
 			iPrev = nOrds
 		}
@@ -126,7 +126,7 @@ func IsRingCounterClockwise(layout geom.Layout, ring []float64) bool {
 	// find distinct point after highest point
 	iNext := hiIndex
 	for {
-		iNext = (iNext + stride) % nOrds
+		iNext = (iNext + Strd) % nOrds
 
 		if !internal.Equal(ring, iNext, ring, hiIndex) || iNext == hiIndex {
 			break
@@ -227,17 +227,17 @@ func PerpendicularDistanceFromPointToLine(p, lineStart, lineEnd geom.Coord) floa
 //
 // Param p - a point
 // Param line - a sequence of contiguous line segments defined by their vertices
-func DistanceFromPointToLineString(layout geom.Layout, p geom.Coord, line []float64) float64 {
+func DistanceFromPointToLineString(Lay geom.Layout, p geom.Coord, line []float64) float64 {
 	if len(line) < 2 {
 		panic(fmt.Sprintf("Line array must contain at least one vertex: %v", line))
 	}
 	// this handles the case of length = 1
 	firstPoint := line[0:2]
 	minDistance := internal.Distance2D(p, firstPoint)
-	stride := layout.Stride()
-	for i := 0; i < len(line)-stride; i += stride {
+	Strd := Lay.Stride()
+	for i := 0; i < len(line)-Strd; i += Strd {
 		point1 := geom.Coord(line[i : i+2])
-		point2 := geom.Coord(line[i+stride : i+stride+2])
+		point2 := geom.Coord(line[i+Strd : i+Strd+2])
 		dist := DistanceFromPointToLine(p, point1, point2)
 		if dist < minDistance {
 			minDistance = dist
@@ -324,20 +324,20 @@ func DistanceFromLineToLine(line1Start, line1End, line2Start, line2End geom.Coor
 // SignedArea computes the signed area for a ring. The signed area is positive if the
 // ring is oriented CW, negative if the ring is oriented CCW, and zero if the
 // ring is degenerate or flat.
-func SignedArea(layout geom.Layout, ring []float64) float64 {
-	stride := layout.Stride()
-	if len(ring) < 3*stride {
+func SignedArea(Lay geom.Layout, ring []float64) float64 {
+	Strd := Lay.Stride()
+	if len(ring) < 3*Strd {
 		return 0.0
 	}
 	sum := 0.0
 	// Based on the Shoelace formula.
 	// http://en.wikipedia.org/wiki/Shoelace_formula
 	x0 := ring[0]
-	lenMinusOnePoint := len(ring) - stride
-	for i := stride; i < lenMinusOnePoint; i += stride {
+	lenMinusOnePoint := len(ring) - Strd
+	for i := Strd; i < lenMinusOnePoint; i += Strd {
 		x := ring[i] - x0
-		y1 := ring[i+stride+1]
-		y2 := ring[i-stride+1]
+		y1 := ring[i+Strd+1]
+		y2 := ring[i-Strd+1]
 		sum += x * (y2 - y1)
 	}
 	return sum / 2.0

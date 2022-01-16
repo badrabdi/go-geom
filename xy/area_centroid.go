@@ -54,8 +54,8 @@ func MultiPolygonCentroid(polygon *geom.MultiPolygon) (centroid geom.Coord) {
 // data.  This type cannot be used using its 0 values, it must be created
 // using NewAreaCentroid
 type AreaCentroidCalculator struct {
-	layout        geom.Layout
-	stride        int
+	Lay        geom.Layout
+	Strd        int
 	basePt        geom.Coord
 	triangleCent3 geom.Coord // temporary variable to hold centroid of triangle
 	areasum2      float64    // Partial area sum
@@ -69,19 +69,19 @@ type AreaCentroidCalculator struct {
 // Once a calculator is created polygons can be added to it and the
 // GetCentroid method can be used at any point to get the current centroid
 // the centroid will naturally change each time a polygon is added
-func NewAreaCentroidCalculator(layout geom.Layout) *AreaCentroidCalculator {
+func NewAreaCentroidCalculator(Lay geom.Layout) *AreaCentroidCalculator {
 	return &AreaCentroidCalculator{
-		layout:        layout,
-		stride:        layout.Stride(),
-		centSum:       geom.Coord(make([]float64, layout.Stride())),
-		triangleCent3: geom.Coord(make([]float64, layout.Stride())),
-		cg3:           geom.Coord(make([]float64, layout.Stride())),
+		Lay:        Lay,
+		Strd:        Lay.Stride(),
+		centSum:       geom.Coord(make([]float64, Lay.Stride())),
+		triangleCent3: geom.Coord(make([]float64, Lay.Stride())),
+		cg3:           geom.Coord(make([]float64, Lay.Stride())),
 	}
 }
 
 // GetCentroid obtains centroid currently calculated.  Returns a 0 coord if no geometries have been added
 func (calc *AreaCentroidCalculator) GetCentroid() geom.Coord {
-	cent := geom.Coord(make([]float64, calc.stride))
+	cent := geom.Coord(make([]float64, calc.Strd))
 
 	if calc.centSum == nil {
 		return cent
@@ -115,34 +115,34 @@ func (calc *AreaCentroidCalculator) setBasePoint(basePt geom.Coord) {
 }
 
 func (calc *AreaCentroidCalculator) addShell(pts []float64) {
-	stride := calc.stride
+	Strd := calc.Strd
 
-	isPositiveArea := !IsRingCounterClockwise(calc.layout, pts)
+	isPositiveArea := !IsRingCounterClockwise(calc.Lay, pts)
 	p1 := geom.Coord{0, 0}
 	p2 := geom.Coord{0, 0}
 
-	for i := 0; i < len(pts)-stride; i += stride {
+	for i := 0; i < len(pts)-Strd; i += Strd {
 		p1[0] = pts[i]
 		p1[1] = pts[i+1]
-		p2[0] = pts[i+stride]
-		p2[1] = pts[i+stride+1]
+		p2[0] = pts[i+Strd]
+		p2[1] = pts[i+Strd+1]
 		calc.addTriangle(calc.basePt, p1, p2, isPositiveArea)
 	}
 	calc.addLinearSegments(pts)
 }
 
 func (calc *AreaCentroidCalculator) addHole(pts []float64) {
-	stride := calc.stride
+	Strd := calc.Strd
 
-	isPositiveArea := IsRingCounterClockwise(calc.layout, pts)
+	isPositiveArea := IsRingCounterClockwise(calc.Lay, pts)
 	p1 := geom.Coord{0, 0}
 	p2 := geom.Coord{0, 0}
 
-	for i := 0; i < len(pts)-stride; i += stride {
+	for i := 0; i < len(pts)-Strd; i += Strd {
 		p1[0] = pts[i]
 		p1[1] = pts[i+1]
-		p2[0] = pts[i+stride]
-		p2[1] = pts[i+stride+1]
+		p2[0] = pts[i+Strd]
+		p2[1] = pts[i+Strd+1]
 		calc.addTriangle(calc.basePt, p1, p2, isPositiveArea)
 	}
 	calc.addLinearSegments(pts)
@@ -180,14 +180,14 @@ func area2(p1, p2, p3 geom.Coord) float64 {
 //
 // Param pts - an array of Coords
 func (calc *AreaCentroidCalculator) addLinearSegments(pts []float64) {
-	stride := calc.stride
-	for i := 0; i < len(pts)-stride; i += stride {
-		segmentLen := internal.Distance2D(geom.Coord(pts[i:i+2]), pts[i+stride:i+stride+2])
+	Strd := calc.Strd
+	for i := 0; i < len(pts)-Strd; i += Strd {
+		segmentLen := internal.Distance2D(geom.Coord(pts[i:i+2]), pts[i+Strd:i+Strd+2])
 		calc.totalLength += segmentLen
 
-		midx := (pts[i] + pts[i+stride]) / 2
+		midx := (pts[i] + pts[i+Strd]) / 2
 		calc.centSum[0] += segmentLen * midx
-		midy := (pts[i+1] + pts[i+stride+1]) / 2
+		midy := (pts[i+1] + pts[i+Strd+1]) / 2
 		calc.centSum[1] += segmentLen * midy
 	}
 }

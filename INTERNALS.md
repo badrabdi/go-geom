@@ -58,7 +58,7 @@ an unordered collection of `LineString`s.
 
 `go-geom` makes these structural similarities explicit:
 
-0. A `Point` is a `geom.Coord`, also known as `geom0`.
+0. A `Point` is a `geom.Coord`, also known as `Geom0`.
 
 1. `LineString`s, `LinearRing`s, and and `MultiPoint`s are `[]geom.Coord`, also
    known as `geom1`.
@@ -74,7 +74,7 @@ single anonymous `geom1`.
 
 The hierarchy of embedding is:
 
-	geom0
+	Geom0
 	+- geom1
 	   +- geom2
 	   +- geom3

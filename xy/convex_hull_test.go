@@ -47,7 +47,7 @@ func TestConvexHull(t *testing.T) {
 }
 
 func TestPresort(t *testing.T) {
-	calc := &convexHullCalculator{layout: geom.XY, stride: 2}
+	calc := &convexHullCalculator{Lay: geom.XY, Strd: 2}
 	coords := append([]float64{}, internal.TestRing.FlatCoords()...)
 	calc.preSort(coords)
 
@@ -99,7 +99,7 @@ func TestPresort(t *testing.T) {
 }
 
 func TestReduce(t *testing.T) {
-	calc := &convexHullCalculator{layout: geom.XY, stride: 2}
+	calc := &convexHullCalculator{Lay: geom.XY, Strd: 2}
 
 	reduced := calc.reduce(internal.TestRing.FlatCoords())
 
@@ -140,7 +140,7 @@ func TestOctRing(t *testing.T) {
 		1.5, 3, 10,
 	}
 
-	calc := &convexHullCalculator{layout: geom.XYM, stride: 3}
+	calc := &convexHullCalculator{Lay: geom.XYM, Strd: 3}
 
 	result := calc.computeOctPts(dataWithOctDuplicates)
 	expected := []float64{
@@ -216,7 +216,7 @@ func TestOctRing(t *testing.T) {
 }
 
 func TestGrahamScan(t *testing.T) {
-	calc := &convexHullCalculator{layout: geom.XY, stride: 2}
+	calc := &convexHullCalculator{Lay: geom.XY, Strd: 2}
 	coords := append([]float64{}, internal.TestRing.FlatCoords()...)
 	scan := calc.grahamScan(coords)
 

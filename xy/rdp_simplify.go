@@ -20,16 +20,16 @@ package xy
 // IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // SimplifyFlatCoords uses the Douglas-Peucker algorithm to simplify a 2D
-// flatCoords. It returns the indexes of the points. Note that the indexes are
+// FlatCoord. It returns the indexes of the points. Note that the indexes are
 // based on points, So acesss to x, y pair should be:
 //
-//  x := flatCoords[i*stride]
-//  y := flatCoords[i*stride+1]
+//  x := FlatCoord[i*Strd]
+//  y := FlatCoord[i*Strd+1]
 //
 // Threshold is the distance between a point and the selected start
 // and end line segment. It returns the indexes of the points.
-func SimplifyFlatCoords(flatCoords []float64, threshold float64, stride int) []int {
-	size := len(flatCoords) / stride
+func SimplifyFlatCoords(FlatCoord []float64, threshold float64, Strd int) []int {
+	size := len(FlatCoord) / Strd
 	if size < 3 {
 		ret := make([]int, size)
 		for i := 0; i < size; i++ {
@@ -42,7 +42,7 @@ func SimplifyFlatCoords(flatCoords []float64, threshold float64, stride int) []i
 	mask[0] = 1
 	mask[len(mask)-1] = 1
 
-	found := dpWorker(flatCoords, threshold, mask, stride)
+	found := dpWorker(FlatCoord, threshold, mask, Strd)
 	indexMap := make([]int, 0, found)
 
 	for i, v := range mask {
@@ -57,11 +57,11 @@ func SimplifyFlatCoords(flatCoords []float64, threshold float64, stride int) []i
 // dpWorker does the recursive threshold checks.
 // Using a stack array with a stackLength variable resulted in
 // 4x speed improvement over calling the function recursively.
-func dpWorker(ls []float64, threshold float64, mask []byte, stride int) int {
+func dpWorker(ls []float64, threshold float64, mask []byte, Strd int) int {
 	found := 2
 
 	var stack []int
-	stack = append(stack, 0, len(ls)/stride-1)
+	stack = append(stack, 0, len(ls)/Strd-1)
 
 	l := len(stack)
 	for l > 0 {
@@ -70,11 +70,11 @@ func dpWorker(ls []float64, threshold float64, mask []byte, stride int) int {
 
 		maxDist := 0.0
 		maxIndex := 0
-		a := ls[start*stride : start*stride+stride]
-		b := ls[end*stride : end*stride+stride]
+		a := ls[start*Strd : start*Strd+Strd]
+		b := ls[end*Strd : end*Strd+Strd]
 
 		for i := start + 1; i < end; i++ {
-			p := ls[i*stride : i*stride+stride]
+			p := ls[i*Strd : i*Strd+Strd]
 			dist := distanceFromSegmentSquared(a, b, p)
 			if dist > maxDist {
 				maxDist = dist

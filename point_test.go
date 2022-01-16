@@ -11,9 +11,9 @@ import (
 var _ T = &Point{}
 
 type expectedPoint struct {
-	layout     Layout
-	stride     int
-	flatCoords []float64
+	Lay     Layout
+	Strd     int
+	FlatCoord []float64
 	coords     Coord
 	bounds     *Bounds
 }
@@ -21,9 +21,9 @@ type expectedPoint struct {
 func (g *Point) assertEquals(t *testing.T, e *expectedPoint) {
 	t.Helper()
 	assert.NoError(t, g.verify())
-	assert.Equal(t, e.layout, g.Layout())
-	assert.Equal(t, e.stride, g.Stride())
-	assert.Equal(t, e.flatCoords, g.FlatCoords())
+	assert.Equal(t, e.Lay, g.Layout())
+	assert.Equal(t, e.Strd, g.Stride())
+	assert.Equal(t, e.FlatCoord, g.FlatCoords())
 	assert.Nil(t, g.Ends())
 	assert.Nil(t, g.Endss())
 	assert.Equal(t, 1, g.NumCoords())
@@ -39,9 +39,9 @@ func TestPoint(t *testing.T) {
 		{
 			p: NewPoint(XY),
 			expected: &expectedPoint{
-				layout:     XY,
-				stride:     2,
-				flatCoords: []float64{0, 0},
+				Lay:     XY,
+				Strd:     2,
+				FlatCoord: []float64{0, 0},
 				coords:     Coord{0, 0},
 				bounds:     NewBounds(XY).Set(0, 0, 0, 0),
 			},
@@ -49,9 +49,9 @@ func TestPoint(t *testing.T) {
 		{
 			p: NewPoint(XY).MustSetCoords(Coord{1, 2}),
 			expected: &expectedPoint{
-				layout:     XY,
-				stride:     2,
-				flatCoords: []float64{1, 2},
+				Lay:     XY,
+				Strd:     2,
+				FlatCoord: []float64{1, 2},
 				coords:     Coord{1, 2},
 				bounds:     NewBounds(XY).Set(1, 2, 1, 2),
 			},
@@ -59,9 +59,9 @@ func TestPoint(t *testing.T) {
 		{
 			p: NewPoint(XYZ),
 			expected: &expectedPoint{
-				layout:     XYZ,
-				stride:     3,
-				flatCoords: []float64{0, 0, 0},
+				Lay:     XYZ,
+				Strd:     3,
+				FlatCoord: []float64{0, 0, 0},
 				coords:     Coord{0, 0, 0},
 				bounds:     NewBounds(XYZ).Set(0, 0, 0, 0, 0, 0),
 			},
@@ -69,9 +69,9 @@ func TestPoint(t *testing.T) {
 		{
 			p: NewPoint(XYZ).MustSetCoords(Coord{1, 2, 3}),
 			expected: &expectedPoint{
-				layout:     XYZ,
-				stride:     3,
-				flatCoords: []float64{1, 2, 3},
+				Lay:     XYZ,
+				Strd:     3,
+				FlatCoord: []float64{1, 2, 3},
 				coords:     Coord{1, 2, 3},
 				bounds:     NewBounds(XYZ).Set(1, 2, 3, 1, 2, 3),
 			},
@@ -79,9 +79,9 @@ func TestPoint(t *testing.T) {
 		{
 			p: NewPoint(XYM),
 			expected: &expectedPoint{
-				layout:     XYM,
-				stride:     3,
-				flatCoords: []float64{0, 0, 0},
+				Lay:     XYM,
+				Strd:     3,
+				FlatCoord: []float64{0, 0, 0},
 				coords:     Coord{0, 0, 0},
 				bounds:     NewBounds(XYM).Set(0, 0, 0, 0, 0, 0),
 			},
@@ -89,9 +89,9 @@ func TestPoint(t *testing.T) {
 		{
 			p: NewPoint(XYM).MustSetCoords(Coord{1, 2, 3}),
 			expected: &expectedPoint{
-				layout:     XYM,
-				stride:     3,
-				flatCoords: []float64{1, 2, 3},
+				Lay:     XYM,
+				Strd:     3,
+				FlatCoord: []float64{1, 2, 3},
 				coords:     Coord{1, 2, 3},
 				bounds:     NewBounds(XYM).Set(1, 2, 3, 1, 2, 3),
 			},
@@ -99,9 +99,9 @@ func TestPoint(t *testing.T) {
 		{
 			p: NewPoint(XYZM),
 			expected: &expectedPoint{
-				layout:     XYZM,
-				stride:     4,
-				flatCoords: []float64{0, 0, 0, 0},
+				Lay:     XYZM,
+				Strd:     4,
+				FlatCoord: []float64{0, 0, 0, 0},
 				coords:     Coord{0, 0, 0, 0},
 				bounds:     NewBounds(XYZM).Set(0, 0, 0, 0, 0, 0, 0, 0),
 			},
@@ -109,9 +109,9 @@ func TestPoint(t *testing.T) {
 		{
 			p: NewPoint(XYZM).MustSetCoords(Coord{1, 2, 3, 4}),
 			expected: &expectedPoint{
-				layout:     XYZM,
-				stride:     4,
-				flatCoords: []float64{1, 2, 3, 4},
+				Lay:     XYZM,
+				Strd:     4,
+				FlatCoord: []float64{1, 2, 3, 4},
 				coords:     Coord{1, 2, 3, 4},
 				bounds:     NewBounds(XYZM).Set(1, 2, 3, 4, 1, 2, 3, 4),
 			},

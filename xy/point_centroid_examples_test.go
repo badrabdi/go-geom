@@ -42,10 +42,10 @@ func ExampleNewPointCentroidCalculator() {
 	polygon := geom.NewPolygonFlat(geom.XY, []float64{0, 0, 2, 0, 2, 2, 0, 2}, []int{8})
 	calculator := xy.NewPointCentroidCalculator()
 	coords := polygon.FlatCoords()
-	stride := polygon.Layout().Stride()
+	Strd := polygon.Layout().Stride()
 
-	for i := 0; i < len(coords); i += stride {
-		calculator.AddCoord(geom.Coord(coords[i : i+stride]))
+	for i := 0; i < len(coords); i += Strd {
+		calculator.AddCoord(geom.Coord(coords[i : i+Strd]))
 	}
 
 	fmt.Println(calculator.GetCentroid())

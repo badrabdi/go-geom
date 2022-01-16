@@ -12,8 +12,8 @@ import (
 )
 
 type convexHullCalculator struct {
-	layout   geom.Layout
-	stride   int
+	Lay   geom.Layout
+	Strd   int
 	inputPts []float64
 }
 
@@ -24,8 +24,8 @@ type convexHullCalculator struct {
 func ConvexHull(geometry geom.T) geom.T {
 	// copy coords because the algorithm reorders them
 	calc := convexHullCalculator{
-		layout:   geometry.Layout(),
-		stride:   geometry.Layout().Stride(),
+		Lay:   geometry.Layout(),
+		Strd:   geometry.Layout().Stride(),
 		inputPts: geometry.FlatCoords(),
 	}
 
@@ -36,11 +36,11 @@ func ConvexHull(geometry geom.T) geom.T {
 // A convex hull is the smallest convex geometry that contains
 // all the points in the input coordinates
 // Uses the Graham Scan algorithm
-func ConvexHullFlat(layout geom.Layout, coords []float64) geom.T {
+func ConvexHullFlat(Lay geom.Layout, coords []float64) geom.T {
 	calc := convexHullCalculator{
 		inputPts: coords,
-		layout:   layout,
-		stride:   layout.Stride(),
+		Lay:   Lay,
+		Strd:   Lay.Stride(),
 	}
 	return calc.getConvexHull()
 }
@@ -49,17 +49,17 @@ func (calc convexHullCalculator) getConvexHull() geom.T {
 	if len(calc.inputPts) == 0 {
 		return nil
 	}
-	if len(calc.inputPts)/calc.stride == 1 {
-		return geom.NewPointFlat(calc.layout, calc.inputPts)
+	if len(calc.inputPts)/calc.Strd == 1 {
+		return geom.NewPointFlat(calc.Lay, calc.inputPts)
 	}
-	if len(calc.inputPts)/calc.stride == 2 {
-		return geom.NewLineStringFlat(calc.layout, calc.inputPts)
+	if len(calc.inputPts)/calc.Strd == 2 {
+		return geom.NewLineStringFlat(calc.Lay, calc.inputPts)
 	}
 
-	reducedPts := transform.UniqueCoords(calc.layout, comparator{}, calc.inputPts)
+	reducedPts := transform.UniqueCoords(calc.Lay, comparator{}, calc.inputPts)
 
 	// use heuristic to reduce points, if large
-	if len(calc.inputPts)/calc.stride > 50 {
+	if len(calc.inputPts)/calc.Strd > 50 {
 		reducedPts = calc.reduce(calc.inputPts)
 	}
 	// sort points for Graham scan.
@@ -74,28 +74,28 @@ func (calc convexHullCalculator) getConvexHull() geom.T {
 
 func (calc *convexHullCalculator) lineOrPolygon(coordinates []float64) geom.T {
 	cleanCoords := calc.cleanRing(coordinates)
-	if len(cleanCoords) == 3*calc.stride {
-		return geom.NewLineStringFlat(calc.layout, cleanCoords[0:len(cleanCoords)-calc.stride])
+	if len(cleanCoords) == 3*calc.Strd {
+		return geom.NewLineStringFlat(calc.Lay, cleanCoords[0:len(cleanCoords)-calc.Strd])
 	}
-	return geom.NewPolygonFlat(calc.layout, cleanCoords, []int{len(cleanCoords)})
+	return geom.NewPolygonFlat(calc.Lay, cleanCoords, []int{len(cleanCoords)})
 }
 
 func (calc *convexHullCalculator) cleanRing(original []float64) []float64 {
 	cleanedRing := []float64{}
 	var previousDistinctCoordinate []float64
-	for i := 0; i < len(original)-calc.stride; i += calc.stride {
-		if internal.Equal(original, i, original, i+calc.stride) {
+	for i := 0; i < len(original)-calc.Strd; i += calc.Strd {
+		if internal.Equal(original, i, original, i+calc.Strd) {
 			continue
 		}
-		currentCoordinate := original[i : i+calc.stride]
-		nextCoordinate := original[i+calc.stride : i+calc.stride+calc.stride]
+		currentCoordinate := original[i : i+calc.Strd]
+		nextCoordinate := original[i+calc.Strd : i+calc.Strd+calc.Strd]
 		if previousDistinctCoordinate != nil && calc.isBetween(previousDistinctCoordinate, currentCoordinate, nextCoordinate) {
 			continue
 		}
 		cleanedRing = append(cleanedRing, currentCoordinate...)
 		previousDistinctCoordinate = currentCoordinate
 	}
-	return append(cleanedRing, original[len(original)-calc.stride:]...)
+	return append(cleanedRing, original[len(original)-calc.Strd:]...)
 }
 
 func (calc *convexHullCalculator) isBetween(c1, c2, c3 []float64) bool {
@@ -122,14 +122,14 @@ func (calc *convexHullCalculator) isBetween(c1, c2, c3 []float64) bool {
 }
 
 func (calc *convexHullCalculator) grahamScan(coordData []float64) []float64 {
-	coordStack := internal.NewCoordStack(calc.layout)
+	coordStack := internal.NewCoordStack(calc.Lay)
 	coordStack.Push(coordData, 0)
-	coordStack.Push(coordData, calc.stride)
-	coordStack.Push(coordData, calc.stride*2)
-	for i := 3 * calc.stride; i < len(coordData); i += calc.stride {
+	coordStack.Push(coordData, calc.Strd)
+	coordStack.Push(coordData, calc.Strd*2)
+	for i := 3 * calc.Strd; i < len(coordData); i += calc.Strd {
 		p, remaining := coordStack.Pop()
 		// check for empty stack to guard against robustness problems
-		for remaining > 0 && bigxy.OrientationIndex(geom.Coord(coordStack.Peek()), geom.Coord(p), geom.Coord(coordData[i:i+calc.stride])) > 0 {
+		for remaining > 0 && bigxy.OrientationIndex(geom.Coord(coordStack.Peek()), geom.Coord(p), geom.Coord(coordData[i:i+calc.Strd])) > 0 {
 			p, _ = coordStack.Pop()
 		}
 		coordStack.Push(p, 0)
@@ -143,16 +143,16 @@ func (calc *convexHullCalculator) preSort(pts []float64) {
 	// find the lowest point in the set. If two or more points have
 	// the same minimum y coordinate choose the one with the minimu x.
 	// This focal point is put in array location pts[0].
-	for i := calc.stride; i < len(pts); i += calc.stride {
+	for i := calc.Strd; i < len(pts); i += calc.Strd {
 		if pts[i+1] < pts[1] || (pts[i+1] == pts[1] && pts[i] < pts[0]) {
-			for k := 0; k < calc.stride; k++ {
+			for k := 0; k < calc.Strd; k++ {
 				pts[k], pts[i+k] = pts[i+k], pts[k]
 			}
 		}
 	}
 
 	// sort the points radially around the focal point.
-	sort.Sort(NewRadialSorting(calc.layout, pts, geom.Coord{pts[0], pts[1]}))
+	sort.Sort(NewRadialSorting(calc.Lay, pts, geom.Coord{pts[0], pts[1]}))
 }
 
 // Uses a heuristic to reduce the number of points scanned
@@ -178,9 +178,9 @@ func (calc *convexHullCalculator) reduce(inputPts []float64) []float64 {
 	}
 
 	// add points defining polygon
-	reducedSet := transform.NewTreeSet(calc.layout, comparator{})
-	for i := 0; i < len(polyPts); i += calc.stride {
-		reducedSet.Insert(polyPts[i : i+calc.stride])
+	reducedSet := transform.NewTreeSet(calc.Lay, comparator{})
+	for i := 0; i < len(polyPts); i += calc.Strd {
+		reducedSet.Insert(polyPts[i : i+calc.Strd])
 	}
 
 	/**
@@ -189,9 +189,9 @@ func (calc *convexHullCalculator) reduce(inputPts []float64) []float64 {
 	 * but this doesn't matter since the points of the interior polygon
 	 * are forced to be in the reduced set.
 	 */
-	for i := 0; i < len(inputPts); i += calc.stride {
-		pt := geom.Coord(inputPts[i : i+calc.stride])
-		if !IsPointInRing(calc.layout, pt, polyPts) {
+	for i := 0; i < len(inputPts); i += calc.Strd {
+		pt := geom.Coord(inputPts[i : i+calc.Strd])
+		if !IsPointInRing(calc.Lay, pt, polyPts) {
 			reducedSet.Insert(pt)
 		}
 	}
@@ -199,14 +199,14 @@ func (calc *convexHullCalculator) reduce(inputPts []float64) []float64 {
 	reducedPts := reducedSet.ToFlatArray()
 
 	// ensure that computed array has at least 3 points (not necessarily unique)
-	if len(reducedPts) < 3*calc.stride {
+	if len(reducedPts) < 3*calc.Strd {
 		return calc.padArray3(reducedPts)
 	}
 	return reducedPts
 }
 
 func (calc *convexHullCalculator) padArray3(pts []float64) []float64 {
-	pad := make([]float64, 3*calc.stride)
+	pad := make([]float64, 3*calc.Strd)
 
 	for i := 0; i < len(pad); i++ {
 		if i < len(pts) {
@@ -219,19 +219,19 @@ func (calc *convexHullCalculator) padArray3(pts []float64) []float64 {
 }
 
 func (calc *convexHullCalculator) computeOctRing(inputPts []float64) []float64 {
-	stride := calc.stride
+	Strd := calc.Strd
 	octPts := calc.computeOctPts(inputPts)
 
 	// Dedup adjacent points, only keep ones that are different from previous.
-	uniquePts := octPts[0:stride]
-	for i := stride; i < len(octPts); i += stride {
-		if !internal.Equal(octPts, i-stride, octPts, i) {
-			uniquePts = append(uniquePts, octPts[i:i+stride]...)
+	uniquePts := octPts[0:Strd]
+	for i := Strd; i < len(octPts); i += Strd {
+		if !internal.Equal(octPts, i-Strd, octPts, i) {
+			uniquePts = append(uniquePts, octPts[i:i+Strd]...)
 		}
 	}
 
 	// Need at least 3 unique points (a triangle) to exclude anything inside.
-	if len(uniquePts) < 3*stride {
+	if len(uniquePts) < 3*Strd {
 		return nil
 	}
 
@@ -239,54 +239,54 @@ func (calc *convexHullCalculator) computeOctRing(inputPts []float64) []float64 {
 }
 
 func (calc *convexHullCalculator) computeOctPts(inputPts []float64) []float64 {
-	stride := calc.stride
-	pts := make([]float64, 8*stride)
+	Strd := calc.Strd
+	pts := make([]float64, 8*Strd)
 
-	for j := 0; j < len(pts); j += stride {
-		for k := 0; k < stride; k++ {
+	for j := 0; j < len(pts); j += Strd {
+		for k := 0; k < Strd; k++ {
 			pts[j+k] = inputPts[k]
 		}
 	}
 
-	for i := stride; i < len(inputPts); i += stride {
+	for i := Strd; i < len(inputPts); i += Strd {
 		if inputPts[i] < pts[0] {
-			for k := 0; k < stride; k++ {
+			for k := 0; k < Strd; k++ {
 				pts[k] = inputPts[i+k]
 			}
 		}
-		if inputPts[i]-inputPts[i+1] < pts[stride]-pts[stride+1] {
-			for k := 0; k < stride; k++ {
-				pts[stride+k] = inputPts[i+k]
+		if inputPts[i]-inputPts[i+1] < pts[Strd]-pts[Strd+1] {
+			for k := 0; k < Strd; k++ {
+				pts[Strd+k] = inputPts[i+k]
 			}
 		}
-		if inputPts[i+1] > pts[2*stride+1] {
-			for k := 0; k < stride; k++ {
-				pts[2*stride+k] = inputPts[i+k]
+		if inputPts[i+1] > pts[2*Strd+1] {
+			for k := 0; k < Strd; k++ {
+				pts[2*Strd+k] = inputPts[i+k]
 			}
 		}
-		if inputPts[i]+inputPts[i+1] > pts[3*stride]+pts[3*stride+1] {
-			for k := 0; k < stride; k++ {
-				pts[3*stride+k] = inputPts[i+k]
+		if inputPts[i]+inputPts[i+1] > pts[3*Strd]+pts[3*Strd+1] {
+			for k := 0; k < Strd; k++ {
+				pts[3*Strd+k] = inputPts[i+k]
 			}
 		}
-		if inputPts[i] > pts[4*stride] {
-			for k := 0; k < stride; k++ {
-				pts[4*stride+k] = inputPts[i+k]
+		if inputPts[i] > pts[4*Strd] {
+			for k := 0; k < Strd; k++ {
+				pts[4*Strd+k] = inputPts[i+k]
 			}
 		}
-		if inputPts[i]-inputPts[i+1] > pts[5*stride]-pts[5*stride+1] {
-			for k := 0; k < stride; k++ {
-				pts[5*stride+k] = inputPts[i+k]
+		if inputPts[i]-inputPts[i+1] > pts[5*Strd]-pts[5*Strd+1] {
+			for k := 0; k < Strd; k++ {
+				pts[5*Strd+k] = inputPts[i+k]
 			}
 		}
-		if inputPts[i+1] < pts[6*stride+1] {
-			for k := 0; k < stride; k++ {
-				pts[6*stride+k] = inputPts[i+k]
+		if inputPts[i+1] < pts[6*Strd+1] {
+			for k := 0; k < Strd; k++ {
+				pts[6*Strd+k] = inputPts[i+k]
 			}
 		}
-		if inputPts[i]+inputPts[i+1] < pts[7*stride]+pts[7*stride+1] {
-			for k := 0; k < stride; k++ {
-				pts[7*stride+k] = inputPts[i+k]
+		if inputPts[i]+inputPts[i+1] < pts[7*Strd]+pts[7*Strd+1] {
+			for k := 0; k < Strd; k++ {
+				pts[7*Strd+k] = inputPts[i+k]
 			}
 		}
 	}

@@ -9,8 +9,8 @@ import "github.com/twpayne/go-geom"
 type FlatCoord struct {
 	isLess IsLess
 	coords []float64
-	layout geom.Layout
-	stride int
+	Lay geom.Layout
+	Strd int
 }
 
 // IsLess the function used by FlatCoord to sort the coordinate array
@@ -36,31 +36,31 @@ func IsLess2D(v1, v2 []float64) bool {
 }
 
 // NewFlatCoordSorting2D creates a Compare2D based sort.Interface implementation
-func NewFlatCoordSorting2D(layout geom.Layout, coordData []float64) FlatCoord {
-	return NewFlatCoordSorting(layout, coordData, IsLess2D)
+func NewFlatCoordSorting2D(Lay geom.Layout, coordData []float64) FlatCoord {
+	return NewFlatCoordSorting(Lay, coordData, IsLess2D)
 }
 
 // NewFlatCoordSorting creates a sort.Interface implementation based on the Comparator function
-func NewFlatCoordSorting(layout geom.Layout, coordData []float64, comparator IsLess) FlatCoord {
+func NewFlatCoordSorting(Lay geom.Layout, coordData []float64, comparator IsLess) FlatCoord {
 	return FlatCoord{
 		isLess: comparator,
 		coords: coordData,
-		layout: layout,
-		stride: layout.Stride(),
+		Lay: Lay,
+		Strd: Lay.Stride(),
 	}
 }
 
 func (s FlatCoord) Len() int {
-	return len(s.coords) / s.stride
+	return len(s.coords) / s.Strd
 }
 
 func (s FlatCoord) Swap(i, j int) {
-	for k := 0; k < s.stride; k++ {
-		s.coords[i*s.stride+k], s.coords[j*s.stride+k] = s.coords[j*s.stride+k], s.coords[i*s.stride+k]
+	for k := 0; k < s.Strd; k++ {
+		s.coords[i*s.Strd+k], s.coords[j*s.Strd+k] = s.coords[j*s.Strd+k], s.coords[i*s.Strd+k]
 	}
 }
 
 func (s FlatCoord) Less(i, j int) bool {
-	is, js := i*s.stride, j*s.stride
-	return s.isLess(s.coords[is:is+s.stride], s.coords[js:js+s.stride])
+	is, js := i*s.Strd, j*s.Strd
+	return s.isLess(s.coords[is:is+s.Strd], s.coords[js:js+s.Strd])
 }
